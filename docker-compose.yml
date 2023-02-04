@@ -15,5 +15,5 @@ services:
       - TZ=Asia/Shanghai
     network_mode: bridge
     volumes:
-      - ~/.SASAMI/data:/app/data              # 这几条为挂载ATRI的工作数据目录与配置文件
-      - ~/.SASAMI/accounts:/app/accounts      # 挂载格式为 宿主机路径:容器路径
+      - ~/.sasami-bot/data:/app/data              # 这几条为挂载ATRI的工作数据目录与配置文件
+      - ~/.sasami-bot/accounts:/app/accounts      # 挂载格式为 宿主机路径:容器路径

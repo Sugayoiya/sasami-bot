@@ -1,6 +1,6 @@
-FROM python:3.9 as requirements-stage
+FROM python:3.10 as requirements-stage
 
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
 
 WORKDIR /app
 
