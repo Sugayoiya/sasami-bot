@@ -1,7 +1,9 @@
+import os
 from datetime import timedelta
 from ipaddress import IPv4Address
 from pathlib import Path
-import os
+from typing import Optional
+
 import yaml
 
 
@@ -60,3 +62,7 @@ RUNTIME_CONFIG = {
     "gocq_download_domain": InlineGoCQHTTP.download_domain,
     "gocq_version": InlineGoCQHTTP.download_version,
 }
+
+# 代理，例如 "http://127.0.0.1:7890"
+# 如果是WLS 可以 f"http://{hostip}:7890" 使用寄主机的代理
+SYSTEM_PROXY: Optional[str] = None  # 全局代理

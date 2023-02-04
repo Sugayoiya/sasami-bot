@@ -6,3 +6,13 @@ nonebot-plugin-htmlrender==0.2.0.3
 nonebot-plugin-imageutils==0.1.14
 jieba>=0.42.1
 pinyin>=0.4.0
+pypinyin>=0.46.0
+retrying>=1.3.3
+rich>=12.4.3
+ImageHash>=4.2.1
+requests
+# cn2an>=0.5.16
+# lxml==4.6.5
+# dateparser>=1.1.0
+# aiohttp==3.7.4.post0
+beautifulsoup4==4.9.3

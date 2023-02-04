@@ -1,0 +1,421 @@
+{
+  "gesotown": {
+    "pickupBrand": {
+      "image": {
+        "url": "https://splatoon3.ink/assets/splatnet/carousel_img/d614cbb672fe000ee39c1919e5b034f2e55b702cafaff1a7cc5f37dcf7ad1024_0.png"
+      },
+      "brand": {
+        "name": "Barazushi",
+        "usualGearPower": {
+          "__splatoon3ink_id": "aedd94fe223261d5",
+          "name": "Intensify Action",
+          "desc": "Makes Squid Rolls and Squid Surges easier to do and steadies your aim when firing after jumping.",
+          "image": {
+            "url": "https://splatoon3.ink/assets/splatnet/skill_img/1a0c78a1714c5abababd7ffcba258c723fefade1f92684aa5f0ff7784cc467d0_0.png"
+          },
+          "isEmptySlot": false
+        },
+        "id": "QnJhbmQtMTk="
+      },
+      "saleEndTime": "2023-02-05T00:00:00Z",
+      "brandGears": [
+        {
+          "id": "U2FsZUdlYXItMF8xNjc1NDY4ODAwXzA=",
+          "saleEndTime": "2023-02-05T00:00:00Z",
+          "price": 16800,
+          "gear": {
+            "__splatoon3ink_id": "662beb4fb9ea74f9",
+            "__typename": "HeadGear",
+            "name": "Ink-Black Flap Cap",
+            "primaryGearPower": {
+              "__splatoon3ink_id": "d419d93c9ca266f2",
+              "name": "Ink Resistance Up",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/db36f7e89194ed642f53465abfa449669031a66d7538135c703d3f7d41f99c0d_0.png"
+              }
+            },
+            "additionalGearPowers": [
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              },
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              },
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              }
+            ],
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/gear_img/9121a06967442e44a1a6704632654cc6f099d3f7f274f45062ac32836fc6e484_0.png"
+            },
+            "brand": {
+              "name": "Barazushi",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/brand_img/d614cbb672fe000ee39c1919e5b034f2e55b702cafaff1a7cc5f37dcf7ad1024_0.png"
+              },
+              "id": "QnJhbmQtMTk="
+            }
+          }
+        },
+        {
+          "id": "U2FsZUdlYXItMF8xNjc1NDY4ODAwXzE=",
+          "saleEndTime": "2023-02-05T00:00:00Z",
+          "price": 18000,
+          "gear": {
+            "__splatoon3ink_id": "8be6bc50a7bc8ab5",
+            "__typename": "ClothingGear",
+            "name": "Arctic Monster Parka",
+            "primaryGearPower": {
+              "__splatoon3ink_id": "1d202ffb6e81bce5",
+              "name": "Respawn Punisher",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/de0d92f7dfed6c76772653d6858e7b67dd1c83be31bd2324c7939105180f5b71_0.png"
+              }
+            },
+            "additionalGearPowers": [
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              },
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              },
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              }
+            ],
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/gear_img/730cf0fbcaf569bba2a79d30782fdcf01107a8ac452ea345dac1f2860133292f_0.png"
+            },
+            "brand": {
+              "name": "Barazushi",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/brand_img/d614cbb672fe000ee39c1919e5b034f2e55b702cafaff1a7cc5f37dcf7ad1024_0.png"
+              },
+              "id": "QnJhbmQtMTk="
+            }
+          }
+        },
+        {
+          "id": "U2FsZUdlYXItMF8xNjc1NDY4ODAwXzI=",
+          "saleEndTime": "2023-02-05T00:00:00Z",
+          "price": 15300,
+          "gear": {
+            "__splatoon3ink_id": "f90966ee929161d3",
+            "__typename": "ShoesGear",
+            "name": "Desert Chukkas",
+            "primaryGearPower": {
+              "__splatoon3ink_id": "815a9a65c869e5d9",
+              "name": "Sub Resistance Up",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/664489b24e668ef1937bfc9a80a8cf9cf4927b1e16481fa48e7faee42122996d_0.png"
+              }
+            },
+            "additionalGearPowers": [
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              },
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              },
+              {
+                "__splatoon3ink_id": "264ff06a6e99b11a",
+                "name": "Unknown",
+                "image": {
+                  "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+                }
+              }
+            ],
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/gear_img/dd4dcd9a6484a70c429e2ab31b6d4e4f0d239e6ed07f76f2693cae64d858774e_0.png"
+            },
+            "brand": {
+              "name": "Barazushi",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/brand_img/d614cbb672fe000ee39c1919e5b034f2e55b702cafaff1a7cc5f37dcf7ad1024_0.png"
+              },
+              "id": "QnJhbmQtMTk="
+            }
+          }
+        }
+      ],
+      "nextBrand": {
+        "name": "Enperry",
+        "image": {
+          "url": "https://splatoon3.ink/assets/splatnet/brand_img/bc215963d1a424a5f9707d565f07a5bcf79e19cde17372a9a6a914cd986f7fc9_0.png"
+        },
+        "id": "QnJhbmQtMTY="
+      }
+    },
+    "limitedGears": [
+      {
+        "id": "U2FsZUdlYXItMV8xNjc1NDQwMDAwXzA=",
+        "saleEndTime": "2023-02-04T16:00:00Z",
+        "price": 2000,
+        "gear": {
+          "__splatoon3ink_id": "7262e999c5bad9da",
+          "__typename": "ClothingGear",
+          "name": "Squid-Pattern Waistcoat",
+          "primaryGearPower": {
+            "__splatoon3ink_id": "d419d93c9ca266f2",
+            "name": "Ink Resistance Up",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/skill_img/db36f7e89194ed642f53465abfa449669031a66d7538135c703d3f7d41f99c0d_0.png"
+            }
+          },
+          "additionalGearPowers": [
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            }
+          ],
+          "image": {
+            "url": "https://splatoon3.ink/assets/splatnet/gear_img/7e629ad5d360e44b1e6b9100a1b05d53c7c5a8c40b85e56f48a6256ca656fe48_0.png"
+          },
+          "brand": {
+            "name": "Krak-On",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/brand_img/744d1ff06654007506d8600e9903c6be80cddadb03e174bd8d24c2075c66227e_0.png"
+            },
+            "id": "QnJhbmQtMg=="
+          }
+        }
+      },
+      {
+        "id": "U2FsZUdlYXItMV8xNjc1NDU0NDAwXzA=",
+        "saleEndTime": "2023-02-04T20:00:00Z",
+        "price": 1750,
+        "gear": {
+          "__splatoon3ink_id": "1d3e46a11ffbec9c",
+          "__typename": "ClothingGear",
+          "name": "Pirate-Stripe Tee",
+          "primaryGearPower": {
+            "__splatoon3ink_id": "0e71bff24c3f37ad",
+            "name": "Ninja Squid",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/skill_img/2c0ef71abfb3efe0e67ab981fc9cd46efddcaf93e6e20da96980079f8509d05d_0.png"
+            }
+          },
+          "additionalGearPowers": [
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            }
+          ],
+          "image": {
+            "url": "https://splatoon3.ink/assets/splatnet/gear_img/7dec56c0cf8d0d86419cc98a50d11ad796e9ea5b9d4ac40600915d53d161b1b5_0.png"
+          },
+          "brand": {
+            "name": "Splash Mob",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/brand_img/5bfe0fa5868f4aa0edc436c05ddc230d6d527e9405f070f9472945976928d1e5_0.png"
+            },
+            "id": "QnJhbmQtOA=="
+          }
+        }
+      },
+      {
+        "id": "U2FsZUdlYXItMV8xNjc1NDY4ODAwXzA=",
+        "saleEndTime": "2023-02-05T00:00:00Z",
+        "price": 3250,
+        "gear": {
+          "__splatoon3ink_id": "2e526124ce7e8f6f",
+          "__typename": "HeadGear",
+          "name": "Squidvader Cap",
+          "primaryGearPower": {
+            "__splatoon3ink_id": "8340c4eed8943fc7",
+            "name": "Ink Saver (Sub)",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/skill_img/11293d8fe7cfb82d55629c058a447f67968fc449fd52e7dd53f7f162fa4672e3_0.png"
+            }
+          },
+          "additionalGearPowers": [
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            }
+          ],
+          "image": {
+            "url": "https://splatoon3.ink/assets/splatnet/gear_img/4ac702b9e22a053397b730cbf6314db7513cc0a1936c8e85c13e25b334a5c316_0.png"
+          },
+          "brand": {
+            "name": "Skalop",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/brand_img/db625c3f1a4eeb9be7906be633c604bdb092454f399f6c8e8ecf4ed4d566ccf4_0.png"
+            },
+            "id": "QnJhbmQtNw=="
+          }
+        }
+      },
+      {
+        "id": "U2FsZUdlYXItMV8xNjc1NDgzMjAwXzA=",
+        "saleEndTime": "2023-02-05T04:00:00Z",
+        "price": 7200,
+        "gear": {
+          "__splatoon3ink_id": "3c5acd12e6e2d7de",
+          "__typename": "HeadGear",
+          "name": "Annaki Mask",
+          "primaryGearPower": {
+            "__splatoon3ink_id": "16cbf780227d6f6d",
+            "name": "Run Speed Up",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/skill_img/3b6c56c57a6d8024f9c7d6e259ffa2e2be4bdf958653b834e524ffcbf1e6808e_0.png"
+            }
+          },
+          "additionalGearPowers": [
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            },
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            }
+          ],
+          "image": {
+            "url": "https://splatoon3.ink/assets/splatnet/gear_img/9a5ca4a89dd2bcaabee3d25bb6f05296acd481d6201bdcca93d46edd099a2b80_0.png"
+          },
+          "brand": {
+            "name": "Annaki",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/brand_img/04ec0e04721c79735378d4af0b53c3dd3e0d6ebf4ae52e90934524fbc7a3f5fd_0.png"
+            },
+            "id": "QnJhbmQtMTU="
+          }
+        }
+      },
+      {
+        "id": "U2FsZUdlYXItMV8xNjc1NDk3NjAwXzA=",
+        "saleEndTime": "2023-02-05T08:00:00Z",
+        "price": 9000,
+        "gear": {
+          "__splatoon3ink_id": "29a7def9b876a301",
+          "__typename": "HeadGear",
+          "name": "Painter's Mask",
+          "primaryGearPower": {
+            "__splatoon3ink_id": "0e2ac5e15d77b2cb",
+            "name": "Sub Power Up",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/skill_img/9df9825e470e00727aa1009c4418cf0ace58e1e529dab9a7c1787309bb25f327_0.png"
+            }
+          },
+          "additionalGearPowers": [
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            },
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            }
+          ],
+          "image": {
+            "url": "https://splatoon3.ink/assets/splatnet/gear_img/921755ccd3f0dac0afde15b8684dea095e14068ae204febd0beb7c1d039b5676_0.png"
+          },
+          "brand": {
+            "name": "SquidForce",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/brand_img/9ec8a5b980418ad42b25a23ff7ed0417fa2dbd96d52976d55e33b2738a63aef5_0.png"
+            },
+            "id": "QnJhbmQtMA=="
+          }
+        }
+      },
+      {
+        "id": "U2FsZUdlYXItMV8xNjc1NTEyMDAwXzA=",
+        "saleEndTime": "2023-02-05T12:00:00Z",
+        "price": 4200,
+        "gear": {
+          "__splatoon3ink_id": "1dc35b1abeefcd35",
+          "__typename": "HeadGear",
+          "name": "Jean Dream Bucket",
+          "primaryGearPower": {
+            "__splatoon3ink_id": "8340c4eed8943fc7",
+            "name": "Ink Saver (Sub)",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/skill_img/11293d8fe7cfb82d55629c058a447f67968fc449fd52e7dd53f7f162fa4672e3_0.png"
+            }
+          },
+          "additionalGearPowers": [
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            },
+            {
+              "__splatoon3ink_id": "264ff06a6e99b11a",
+              "name": "Unknown",
+              "image": {
+                "url": "https://splatoon3.ink/assets/splatnet/skill_img/dc937b59892604f5a86ac96936cd7ff09e25f18ae6b758e8014a24c7fa039e91_0.png"
+              }
+            }
+          ],
+          "image": {
+            "url": "https://splatoon3.ink/assets/splatnet/gear_img/f4dfea6d1570eaab39e2717c265bee7745ef4551446dd21a95d6f6aef8a80d75_0.png"
+          },
+          "brand": {
+            "name": "Splash Mob",
+            "image": {
+              "url": "https://splatoon3.ink/assets/splatnet/brand_img/5bfe0fa5868f4aa0edc436c05ddc230d6d527e9405f070f9472945976928d1e5_0.png"
+            },
+            "id": "QnJhbmQtOA=="
+          }
+        }
+      }
+    ]
+  }
+}

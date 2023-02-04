@@ -21,3 +21,7 @@ InlineGoCQHTTP:
 
 SauceNAO:
   key: "5886242cbae954452781f44279916ffcf9b940fc"
+
+Pixiv:
+  reverse_proxy: true # 请参考文档
+  reverse_proxy_domain: "i.pixiv.re"
