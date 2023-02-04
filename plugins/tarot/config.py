@@ -18,7 +18,7 @@ except ModuleNotFoundError:
 class PluginConfig(BaseModel, extra=Extra.ignore):
     tarot_path: Path = IMAGE_PATH / "tarot"
     tarot_json: Path = TEXT_PATH / "tarot"
-    chain_reply: bool = False
+    chain_reply: bool = True
     nickname: Set[str] = {"Bot"}
 
 
