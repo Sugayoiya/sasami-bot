@@ -12,7 +12,7 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 from playwright.async_api import Page, BrowserContext
 from retrying import retry
 
-from services.log import logger
+from utils.log import logger
 from utils.user_agent import get_user_agent
 from .browser import get_browser
 from .message_builder import image

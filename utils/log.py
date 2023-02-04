@@ -1,12 +1,12 @@
 import sys
 from datetime import datetime
-from pathlib import Path
 
 from nonebot.log import logger
 
 from configs.config import BotSelfConfig
+from configs.path_config import LOG_PATH
 
-LOGGER_DIR = Path("") / "data" / "logs"
+LOGGER_DIR = LOG_PATH
 LOGGER_DIR.mkdir(exist_ok=True, parents=True)
 
 NOW_TIME = datetime.now().strftime("%Y%m%d-%H")

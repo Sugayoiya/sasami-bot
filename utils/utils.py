@@ -13,7 +13,7 @@ from nonebot.adapters.onebot.v11 import Bot, Message
 from nonebot.matcher import matchers, Matcher
 
 from configs.config import SYSTEM_PROXY
-from services.log import logger
+from utils.log import logger
 
 try:
     import ujson as json

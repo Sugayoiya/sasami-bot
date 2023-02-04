@@ -1,10 +1,9 @@
 import asyncio
 from typing import Optional
 
-from nonebot.log import logger
 from playwright.async_api import Browser, async_playwright
 
-from services.log import logger
+from utils.log import logger
 
 _browser: Optional[Browser] = None
 

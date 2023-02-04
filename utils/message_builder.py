@@ -5,7 +5,7 @@ from nonebot.adapters.onebot.v11.message import MessageSegment, Message
 
 from configs.config import BotSelfConfig
 from configs.path_config import IMAGE_PATH, RECORD_PATH
-from services.log import logger
+from utils.log import logger
 
 
 def image(

@@ -16,3 +16,4 @@ requests
 # dateparser>=1.1.0
 # aiohttp==3.7.4.post0
 beautifulsoup4==4.9.3
+aiocache==0.11.1

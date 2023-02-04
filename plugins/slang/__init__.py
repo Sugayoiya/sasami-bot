@@ -1,9 +1,9 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, Event, Message
-from nonebot.log import logger
 from nonebot.params import CommandArg, ArgStr
 from nonebot.typing import T_State
 
+from utils.log import logger
 from .data import text_to_emoji
 
 slang = on_command("abstract", aliases={"抽象话", "抽象化"}, priority=5, block=True)
