@@ -20,6 +20,10 @@ class PluginConfig(BaseModel, extra=Extra.ignore):
     tarot_json: Path = TEXT_PATH / "tarot"
     chain_reply: bool = True
     nickname: Set[str] = {"Bot"}
+    if not tarot_path.exists():
+        tarot_path.mkdir(parents=True)
+    if not tarot_json.exists():
+        tarot_json.mkdir(parents=True)
 
 
 driver = nonebot.get_driver()
