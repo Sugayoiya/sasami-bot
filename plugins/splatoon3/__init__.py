@@ -1,5 +1,4 @@
 from nonebot import get_driver, on_command
-from nonebot import require
 from nonebot.adapters.onebot.v11 import MessageSegment, Bot, MessageEvent, GroupMessageEvent
 from nonebot.internal.matcher import Matcher
 
@@ -13,8 +12,6 @@ from .utils import SplatoonUtils
 global_config = get_driver().config
 config = Config.parse_obj(global_config)
 driver = get_driver()
-
-scheduler = require("nonebot_plugin_apscheduler").scheduler
 
 splatoon3 = Splatoon3()
 splatoon3_utils = SplatoonUtils()
