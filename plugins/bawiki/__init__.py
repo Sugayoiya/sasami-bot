@@ -2,10 +2,6 @@ from nonebot.plugin import PluginMetadata
 
 from .__main__ import *  # type:ignore
 
-# require("nonebot_plugin_apscheduler")
-# require("nonebot_plugin_htmlrender")
-# require("nonebot_plugin_imageutils")
-
 __version__ = "0.6.4"
 __plugin_meta__ = PluginMetadata(
     name="BAWiki",
