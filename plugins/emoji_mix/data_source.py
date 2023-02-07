@@ -3,8 +3,8 @@ from typing import List, Union, Optional
 
 import httpx
 from nonebot import get_driver
-from nonebot.log import logger
 
+from utils.log import logger as log
 from .config import Config
 from .emoji_data import emojis, dates
 
@@ -51,5 +51,5 @@ async def mix_emoji(emoji_code1: str, emoji_code2: str) -> Union[str, bytes]:
                     return resp.content
             return "出错了，可能不支持该emoji组合"
     except:
-        logger.warning(traceback.format_exc())
+        log.warning(traceback.format_exc())
         return "下载出错，请稍后再试"
