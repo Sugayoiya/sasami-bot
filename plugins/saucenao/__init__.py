@@ -3,7 +3,7 @@ from nonebot.params import CommandArg, Arg, ArgStr, Depends
 from nonebot.plugin import on_command
 from nonebot.typing import T_State
 
-from services.log import logger
+from utils.log import logger as log
 from utils.message_builder import custom_forward_msg
 from utils.utils import get_message_img
 from .saucenao import get_saucenao_image
@@ -84,7 +84,7 @@ async def _(
     else:
         for m in msg[1:]:
             await search_image.send(m)
-    logger.info(
+    log.info(
         f"(USER {event.user_id}, GROUP "
         f"{event.group_id if isinstance(event, GroupMessageEvent) else 'private'})"
         f" 识图:" + img
