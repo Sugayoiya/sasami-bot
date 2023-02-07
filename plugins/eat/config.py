@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 
 class PluginConfig(BaseModel, extra=Extra.ignore):
     what2eat_path: Path = TEXT_PATH / "eat"
-    use_preset_menu: bool = False
+    use_preset_menu: bool = True
     use_preset_greetings: bool = False
     eating_limit: int = 25
     eating_sample_count: int = 5
