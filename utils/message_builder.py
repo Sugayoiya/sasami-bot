@@ -3,7 +3,7 @@ from typing import List, Union
 
 from nonebot.adapters.onebot.v11.message import MessageSegment, Message
 
-from configs.config import BotSelfConfig
+from configs.config import config
 from configs.path_config import IMAGE_PATH, RECORD_PATH
 from utils.log import logger
 
@@ -158,7 +158,8 @@ def music(type_: str, id_: int) -> MessageSegment:
 
 
 def custom_forward_msg(
-        msg_list: List[Union[str, Message]], uin: Union[int, str], name: str = f"这里是{BotSelfConfig.nickname}"
+        msg_list: List[Union[str, Message]], uin: Union[int, str],
+        name: str = f"这里是{config.get_config('BotSelfConfig', 'nickname')}"
 ) -> List[dict]:
     """
     说明:

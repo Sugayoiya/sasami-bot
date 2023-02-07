@@ -3,7 +3,7 @@ from datetime import datetime
 
 from nonebot.log import logger
 
-from configs.config import BotSelfConfig
+from configs.config import config
 from configs.path_config import LOG_PATH
 
 LOGGER_DIR = LOG_PATH
@@ -38,7 +38,7 @@ class LoguruNameDealer:
 logger.remove()
 logger.add(
     sys.stdout,
-    level="DEBUG" if BotSelfConfig.debug else "INFO",
+    level="DEBUG" if config.get_config("BotSelfConfig", "debug") else "INFO",
     colorize=True,
     filter=LoguruNameDealer(),
     format=log_format,

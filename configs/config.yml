@@ -1,27 +1,96 @@
 BotSelfConfig:
-  host: "127.0.0.1"
-  port: 8080
-  debug: true
-  superusers: [ "21778445" ]
-  nickname: [ "ATRI", "Atri", "atri", "亚托莉", "アトリ" ]
-  command_start: [ "", "/" ]
-  command_sep: [ "." ]
-  session_expire_timeout: 60
-  proxy: ""  # 请参考文档
+  HOST:
+    value: "127.0.0.1"
+    name:
+    help:
+    default_value: True
+    level_module:
+  PORT:
+    value: 8080
+    name:
+    help:
+    default_value: True
+    level_module:
+  DEBUG:
+    value: true
+    name:
+    help:
+    default_value: True
+    level_module:
+  SUPERUSERS:
+    value: [ "21778445" ]
+    name:
+    help:
+    default_value: True
+    level_module:
+  NICKNAME:
+    value: [ "SASAMI", "Sasami", "sasami", "锁锁美", "ささみ" ]
+    name:
+    help:
+    default_value: True
+    level_module:
+  COMMAND_START:
+    value: [ "", "/" ]
+    name:
+    help:
+    default_value: True
+    level_module:
+  COMMAND_SEP:
+    value: [ "." ]
+    name:
+    help:
+    default_value: True
+    level_module:
+  SESSION_EXPIRE_TIMEOUT:
+    value: 60
+    name:
+    help:
+    default_value: True
+    level_module:
+  PROXY:
+    value: ""
+    name:
+    help:
+    default_value: True
+    level_module:
 
-InlineGoCQHTTP:
-  enabled: true
-  accounts: # 可多个账号，具体请参考文档
-    - uin: 3186471283
-      password: ""
-      protocol: 5
+#InlineGoCQHTTP:
+#  ENABLED: true
+#  ACCOUNTS: # 可多个账号，具体请参考文档
+#    - UIN: 3186471283
+#      PASSWORD: ""
+#      PROTOCOL: 5
+#
+#  DOWNLOAD_DOMAIN: "github.com"
+#  DOWNLOAD_VERSION: "v1.0.0-rc4"
 
-  download_domain: "github.com"
-  download_version: "v1.0.0-rc4"
-
-SauceNAO:
-  key: "5886242cbae954452781f44279916ffcf9b940fc"
+search_image:
+  # 识图
+  # MAX_FIND_IMAGE_COUNT: 识图返回的最大结果数
+  # API_KEY: Saucenao的API_KEY，通过 https://saucenao.com/user.php?page=search-api 注册获取
+  MAX_FIND_IMAGE_COUNT:
+    value: 4
+    name:
+    help:
+    default_value: True
+    level_module:
+  API_KEY:
+    value: "5886242cbae954452781f44279916ffcf9b940fc"
+    name:
+    help:
+    default_value: True
+    level_module:
 
 Pixiv:
-  reverse_proxy: true # 请参考文档
-  reverse_proxy_domain: "i.pixiv.re"
+  REVERSE_PROXY:
+    value: true
+    name:
+    help:
+    default_value: True
+    level_module:
+  REVERSE_PROXY_DOMAIN:
+    value: "https://pixiv.cat"
+    name:
+    help:
+    default_value: True
+    level_module:
