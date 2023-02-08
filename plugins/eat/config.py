@@ -8,6 +8,7 @@ from pydantic import BaseModel, Extra
 
 from configs.path_config import TEXT_PATH
 from utils.json_util import save_json
+from .utils import Meals
 
 
 class PluginConfig(BaseModel, extra=Extra.ignore):
