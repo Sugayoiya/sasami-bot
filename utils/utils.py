@@ -1,3 +1,4 @@
+import json
 import time
 from collections import defaultdict
 from datetime import datetime
@@ -8,19 +9,11 @@ import httpx
 import nonebot
 import pypinyin
 import pytz
-from nonebot import require
 from nonebot.adapters.onebot.v11 import Bot, Message
 from nonebot.matcher import matchers, Matcher
 
 from configs.config import SYSTEM_PROXY
 from utils.log import logger
-
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
-
-scheduler = require("nonebot_plugin_apscheduler").scheduler
 
 
 class CountLimiter:

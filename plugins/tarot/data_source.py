@@ -1,3 +1,4 @@
+import json
 import random
 from io import BytesIO
 from pathlib import Path
@@ -7,11 +8,6 @@ from PIL import Image
 from nonebot.adapters.onebot.v11 import MessageSegment
 
 from .config import tarot_config, get_tarot
-
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
 
 
 class Tarot:
