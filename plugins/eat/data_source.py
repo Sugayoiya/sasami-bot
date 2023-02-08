@@ -369,8 +369,7 @@ class EatingManager:
         self._greetings = load_json(self._greetings_json)
 
         if new_state:
-            if gid not in self._greetings["groups_id"]:
-                self._greetings["groups_id"].update({gid: True})
+            self._greetings["groups_id"].update({gid: True})
         else:
             if gid in self._greetings["groups_id"]:
                 self._greetings["groups_id"].update({gid: False})
