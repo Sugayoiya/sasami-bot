@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import List, Dict, Set, Union, Any, Optional
 
@@ -6,12 +7,7 @@ from nonebot import get_driver, logger
 from pydantic import BaseModel, Extra
 
 from configs.path_config import TEXT_PATH
-from .utils import save_json, Meals
-
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+from utils.json_util import save_json
 
 
 class PluginConfig(BaseModel, extra=Extra.ignore):

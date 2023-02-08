@@ -3,8 +3,8 @@ from typing import Union, List
 
 from configs.config import config
 from configs.path_config import TEMP_PATH
-from services import logger
 from utils.http_utils import AsyncHttpx
+from utils.log import logger
 from utils.message_builder import image
 
 API_URL_SAUCENAO = "https://saucenao.com/search.php"

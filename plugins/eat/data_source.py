@@ -5,6 +5,7 @@ from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import ActionFailed
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, PrivateMessageEvent
 
+from utils.json_util import load_json, save_json
 from .config import what2eat_config
 from .utils import *
 
