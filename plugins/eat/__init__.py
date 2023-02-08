@@ -1,18 +1,16 @@
 from typing import Coroutine, Any, List
 
-from nonebot import on_command, on_regex, logger, require
+from nonebot import on_command, on_regex, logger
 from nonebot.adapters.onebot.v11 import Bot, GROUP, GROUP_ADMIN, GROUP_OWNER, Message, MessageEvent, MessageSegment, \
     GroupMessageEvent
 from nonebot.matcher import Matcher
 from nonebot.params import Depends, Arg, ArgStr, CommandArg, RegexMatched
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
+from nonebot_plugin_apscheduler import scheduler
 
 from .data_source import eating_manager
 from .utils import Meals, save_cq_image
-
-require("nonebot_plugin_apscheduler")
-from nonebot_plugin_apscheduler import scheduler
 
 __what2eat_version__ = "v0.3.4"
 __what2eat_notes__ = f'''
