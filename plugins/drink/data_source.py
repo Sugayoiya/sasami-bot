@@ -54,8 +54,9 @@ class DrinkManager:
             if self._drink_reminder["groups_id"].get(gid, False):
                 try:
                     await bot.call_api("send_group_msg", group_id=int(gid), message=random.choice(drink_list))
+                    log.info(f"群 {gid} 发送提醒喝水成功")
                 except ActionFailed as e:
-                    log.warning(f"发送群 {gid} 失败：{e}")
+                    log.warning(f"群 {gid} 发送提醒喝水失败：{e}")
 
 
 drink_manager = DrinkManager()

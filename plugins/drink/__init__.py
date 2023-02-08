@@ -1,4 +1,4 @@
-from nonebot import on_command, logger
+from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER, GroupMessageEvent
 from nonebot.permission import SUPERUSER
 from nonebot_plugin_apscheduler import scheduler
@@ -29,18 +29,17 @@ drink_reminder_off = on_command("关闭喝水小助手", permission=SUPERUSER | 
 async def _(event: GroupMessageEvent):
     gid = str(event.group_id)
     drink_manager.update_groups_on(gid, True)
-    await drink_reminder_on.finish("已开启吃饭小助手~")
+    await drink_reminder_on.finish("已开启提醒喝水小助手~")
 
 
 @drink_reminder_off.handle()
 async def _(event: GroupMessageEvent):
     gid = str(event.group_id)
     drink_manager.update_groups_on(gid, False)
-    await drink_reminder_off.finish("已关闭吃饭小助手~")
+    await drink_reminder_off.finish("已关闭提醒喝水小助手~")
 
 
 # 喝水提醒
-@scheduler.scheduled_job("cron", hour="9,10,11,12,13,14,15,16,17,18,19,20,21,22", minute=0, misfire_grace_time=60)
+@scheduler.scheduled_job("cron", hour="8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23", minute=0, misfire_grace_time=60)
 async def drink_reminder_scheduler():
     await drink_manager.drink_reminder()
-    logger.info(f"已群发夜宵提醒")
