@@ -32,10 +32,10 @@ basic_add = on_command("加菜", permission=SUPERUSER, priority=15, block=True)
 show_group_menu = on_command("菜单", aliases={"群菜单", "查看菜单"}, permission=GROUP, priority=15, block=True)
 show_basic_menu = on_command("基础菜单", permission=GROUP, priority=15, block=True)
 
-greeting_on = on_command("开启小助手", aliases={"启用小助手"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
+greeting_on = on_command("开启吃饭小助手", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
                          priority=12,
                          block=True)
-greeting_off = on_command("关闭小助手", aliases={"禁用小助手"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
+greeting_off = on_command("关闭吃饭小助手", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
                           priority=12,
                           block=True)
 add_greeting = on_command("添加问候", aliases={"添加问候语"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
