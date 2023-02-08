@@ -37,8 +37,7 @@ class DrinkManager:
         self._drink_reminder = load_json(self._drink_reminder_group_json)
 
         if new_state:
-            if gid not in self._drink_reminder["groups_id"]:
-                self._drink_reminder["groups_id"].update({gid: True})
+            self._drink_reminder["groups_id"].update({gid: True})
         else:
             if gid in self._drink_reminder["groups_id"]:
                 self._drink_reminder["groups_id"].update({gid: False})
