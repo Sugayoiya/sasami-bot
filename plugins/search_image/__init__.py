@@ -1,4 +1,7 @@
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message
+from random import choice
+
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, Message, MessageSegment
+from nonebot.adapters.onebot.v11.helpers import extract_image_urls, Cooldown
 from nonebot.params import CommandArg, Arg, ArgStr, Depends
 from nonebot.plugin import on_command
 from nonebot.typing import T_State
@@ -6,6 +9,7 @@ from nonebot.typing import T_State
 from utils.log import logger as log
 from utils.message_builder import custom_forward_msg
 from utils.utils import get_message_img
+from .anime_search import Anime
 from .saucenao import get_saucenao_image
 
 __zx_plugin_name__ = "识图"
@@ -89,3 +93,20 @@ async def _(
         f"{event.group_id if isinstance(event, GroupMessageEvent) else 'private'})"
         f" 识图:" + img
     )
+
+
+anime_search = on_command("以图搜番")
+_anime_flmt_notice = choice(["慢...慢一..点❤", "冷静1下", "歇会歇会~~"])
+
+
+@anime_search.got("anime_pic", "图呢？", [Cooldown(5, prompt=_anime_flmt_notice)])
+async def _deal_sear(bot: Bot, event: MessageEvent):
+    user_id = event.get_user_id()
+    img = extract_image_urls(event.message)
+    if not img:
+        await anime_search.finish("请发送图片而不是其它东西…")
+
+    await bot.send(event, "别急，在找了")
+    a = await Anime().search(img[0])
+    result = f"> {MessageSegment.at(user_id)}\n" + a
+    await anime_search.finish(Message(result))
