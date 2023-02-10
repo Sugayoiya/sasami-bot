@@ -3,7 +3,6 @@ import time
 from datetime import datetime
 
 import psutil
-from sasami.utils.exceptions import GetStatusError
 
 _status_msg = """
 > Status Overview
@@ -51,7 +50,7 @@ class Status():
                 - datetime.utcfromtimestamp(b).replace(microsecond=0)
             )
         except Exception:
-            raise GetStatusError("Failed to get status.")
+            raise Exception("Failed to get status.")
 
         msg = "ささみさん@がんばらない……"
         if cpu > 90:  # type: ignore
