@@ -30,8 +30,6 @@ RUNTIME_CONFIG = {
     # "gocq_download_domain": config.get_config("InlineGoCQHTTP", "download_domain"),
     # "gocq_version": config.get_config("InlineGoCQHTTP", "download_version"),
 }
-print(f"config: {config}")
-print(f"RUNTIME_CONFIG: {RUNTIME_CONFIG}")
 
 # 代理，例如 "http://127.0.0.1:7890"
 # 如果是WLS 可以 f"http://{hostip}:7890" 使用寄主机的代理

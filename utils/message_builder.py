@@ -1,4 +1,5 @@
 from pathlib import Path
+from random import choice
 from typing import List, Union
 
 from nonebot.adapters.onebot.v11.message import MessageSegment, Message
@@ -159,7 +160,7 @@ def music(type_: str, id_: int) -> MessageSegment:
 
 def custom_forward_msg(
         msg_list: List[Union[str, Message]], uin: Union[int, str],
-        name: str = f"这里是{config.get_config('BotSelfConfig', 'nickname')}"
+        name: str = f"这里是{choice(config.get_config('BotSelfConfig', 'nickname'))}"
 ) -> List[dict]:
     """
     说明:

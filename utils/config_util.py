@@ -41,7 +41,6 @@ class ConfigsManager:
                         f"****** 可能为config.yaml配置文件填写不规范 ******\n"
                         f"**********************************************"
                     )
-            print(self._simple_data)
 
     def add_plugin_config(
             self,
