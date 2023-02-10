@@ -29,7 +29,7 @@ info_msg = "アトリは高性能ですから！"
 @scheduler.scheduled_job("interval", name="状态检查", minutes=10, misfire_grace_time=15,
                          id="status_check")  # type: ignore
 async def _():
-    log.info("开始检查资源消耗...")
+    log.debug("开始检查资源消耗...")
     msg, stat = Status().get_status()
     if not stat:
         log.warning(msg)
@@ -38,4 +38,4 @@ async def _():
         for superuser in config.get_config("BotSelfConfig", "superusers"):
             await bot.send_private_msg(user_id=superuser, message=msg)
 
-    log.info("资源消耗正常")
+    log.debug("资源消耗正常")
