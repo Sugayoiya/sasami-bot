@@ -49,6 +49,7 @@ class DrinkManager:
             self._drink_path.mkdir(parents=True)
         if not self._drink_reminder_group_json.exists():
             save_json(self._drink_reminder_group_json, {"groups_id": {}})
+        self._drink_reminder = load_json(self._drink_reminder_group_json)
 
     def update_groups_on(self, gid: str, new_state: bool) -> None:
         '''
