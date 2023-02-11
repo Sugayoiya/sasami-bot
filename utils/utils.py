@@ -1,7 +1,9 @@
+import base64
 import json
 import time
 from collections import defaultdict
 from datetime import datetime
+from io import BytesIO
 from pathlib import Path
 from typing import List, Union, Optional, Type, Any
 
@@ -9,6 +11,7 @@ import httpx
 import nonebot
 import pypinyin
 import pytz
+from PIL import Image
 from nonebot.adapters.onebot.v11 import Bot, Message
 from nonebot.matcher import matchers, Matcher
 
@@ -436,3 +439,46 @@ def change_img_md5(path_file: Union[str, Path]) -> bool:
     except Exception as e:
         logger.warning(f"改变图片MD5发生错误 {type(e)}：{e} Path：{path_file}")
         return False
+
+
+def paste_img(path: Path, info: List, box: List, background_img: Image):
+    """
+    @name：paste_img
+    @author： DrinkOolongTea
+    @remark： 拼接图片
+    @param： path:图片源路径 info: 图片list  box: 文字位置, background_img:背景图片
+    @return： 拼接后结果
+    """
+    for i in range(len(info)):
+        img = Image.open(Path(path / Path((info[i]).replace(" ", "_") + ".png"))).convert(
+            'RGBA')
+        r, g, b, a = img.split()
+        background_img.paste(img, box[i], mask=a)
+
+
+def read_bytes_file(filename: Path) -> bytes:
+    """
+    @name：push_league_battle
+    @author： DrinkOolongTea
+    @remark： 读取文件内容
+    @param： filename: path 文件路径
+    @return： 读取内容
+    """
+    f = open(filename, 'rb')
+    b_io = BytesIO(f.read())
+    f.close()
+    base64_str: str = "base64://" + base64.b64encode(b_io.getbuffer()).decode()
+    return base64_str
+
+
+def save_bytes_file(filename: Path, b: bytes):
+    """
+    @name：push_league_battle
+    @author： DrinkOolongTea
+    @remark： 保存文件
+    @param： filename: 文件路径, s:储存内容
+    @return：
+    """
+    f = open(filename, 'wb')
+    f.write(b.getvalue())
+    f.close()
