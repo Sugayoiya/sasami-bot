@@ -9,7 +9,7 @@ from PIL import Image, ImageFont
 from configs.path_config import TEXT_PATH, FONT_PATH, IMAGE_PATH
 from utils.log import logger as log
 from .config import Config
-from .utils import SplatoonUtils
+from .nintendo_utils import SplatoonUtils
 
 config = Config()
 # 品牌名称key
@@ -87,17 +87,14 @@ class Splatoon3:
         with open(config.cn_zh) as file:
             self.CN_zh = json.loads(file.read())
             log.debug('CN_zh 载入成功')
-            # log.debug(f'CN_zh 载入成功: {self.CN_zh}')
         log.debug('载入 EUen.json 翻译文件')
         with open(config.eu_en) as file:
             self.EU_en = json.loads(file.read())
             log.debug('EU_en 载入成功')
-            # log.debug(f'EU_en 载入成功: {self.EU_en}')
         log.debug('载入 brand_traits.json 文件')
         with open(config.brand_traits) as file:
             self.brand_traits = json.loads(file.read())
             log.debug('brand_traits 载入成功')
-            # log.debug(f'brand_traits 载入成功: {self.brand_traits}')
 
     def _get_schedule_data(self):
         if not exists(self.schedule_json_location) or not self._check_schedule_data():

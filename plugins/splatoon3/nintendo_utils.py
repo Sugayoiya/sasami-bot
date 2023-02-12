@@ -1,38 +1,12 @@
 import base64
-import configparser
 import datetime
 from io import BytesIO
-from pathlib import Path
 from typing import List
 
-import requests
 from PIL import Image, ImageDraw, ImageFont
 
 
 class SplatoonUtils:
-
-    @staticmethod
-    def request_get(url: str):
-        """
-        @name：request_get
-        @remark： 获取数据
-        @return： 获取到的数据
-        """
-        res = requests.get(url, timeout=(10, 60))
-        return res.text
-
-    @staticmethod
-    def get_config(path: Path, section: str, option: str) -> str:
-        """
-        @name：get_config
-        @author： DrinkOolongTea
-        @remark： 获取配置文件
-        @param： path:配置文件路径 section:配置项名称 option:配置项key
-        @return： 值
-        """
-        config = configparser.ConfigParser()
-        config.read(path, encoding="utf-8")
-        return config.get(section, option)
 
     @staticmethod
     def change_time_zone(time_str: str) -> str:
@@ -100,49 +74,6 @@ class SplatoonUtils:
         """
         d = {"Rainmaker": "魚", "Splat Zones": "區域", "Clam Blitz": "蛤蜊", "Tower Control": "塔"}
         return d[context]
-
-    @staticmethod
-    def save_bytes_file(filename: Path, b: bytes):
-        """
-        @name：push_league_battle
-        @author： DrinkOolongTea
-        @remark： 保存文件
-        @param： filename: 文件路径, s:储存内容
-        @return： 
-        """
-        f = open(filename, 'wb')
-        f.write(b.getvalue())
-        f.close()
-
-    @staticmethod
-    def paste_img(path: Path, info: List, box: List, background_img: Image):
-        """
-        @name：paste_img
-        @author： DrinkOolongTea
-        @remark： 拼接图片
-        @param： path:图片源路径 info: 图片list  box: 文字位置, background_img:背景图片
-        @return： 拼接后结果
-        """
-        for i in range(len(info)):
-            img = Image.open(Path(path / Path((info[i]).replace(" ", "_") + ".png"))).convert(
-                'RGBA')
-            r, g, b, a = img.split()
-            background_img.paste(img, box[i], mask=a)
-
-    @staticmethod
-    def read_bytes_file(filename: Path) -> bytes:
-        """
-        @name：push_league_battle
-        @author： DrinkOolongTea
-        @remark： 读取文件内容
-        @param： filename: path 文件路径
-        @return： 读取内容
-        """
-        f = open(filename, 'rb')
-        b_io = BytesIO(f.read())
-        f.close()
-        base64_str: str = "base64://" + base64.b64encode(b_io.getbuffer()).decode()
-        return base64_str
 
     @staticmethod
     def utc_to_gmt(utc_date_str: str) -> str:
