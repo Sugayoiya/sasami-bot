@@ -47,8 +47,8 @@ TRANSLATE_RID = {
     "PrivateBattleHistoriesQuery": "8e5ae78b194264a6c230e262d069bd28",
     "XBattleHistoriesQuery": "6796e3cd5dc3ebd51864dc709d899fc5",
     "VsHistoryDetailQuery": "291295ad311b99a6288fc95a5c4cb2d2",
-    "CoopHistoryQuery": "2fd21f270d381ecf894eb975c5f6a716",
-    "CoopHistoryDetailQuery": "9ade2aa3656324870ccec023636aed32",
+    "CoopHistoryQuery": "7edc52165b95dcb2b8a1c14c31e1d5b1",
+    "CoopHistoryDetailQuery": "3cc5f826a6646b85f3ae45db51bd0707",
     "MyOutfitCommonDataEquipmentsQuery": "d29cd0c2b5e6bac90dd5b817914832f8"
 }
 
