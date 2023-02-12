@@ -8,13 +8,13 @@ import time
 import urllib
 from concurrent.futures import ThreadPoolExecutor
 
-# from utils.http_utils import AsyncHttpx
 import requests
 from bs4 import BeautifulSoup
 from httpx import Response
 
 from configs.path_config import TEXT_PATH
 from utils.log import logger as log
+from utils.user_agent import get_user_agent_text
 
 session = requests.Session()
 thread_pool = ThreadPoolExecutor(max_workers=2)
@@ -446,7 +446,7 @@ class NintendoApi:
         log.debug("Attempting to generate new g_token and bulletToken...")
 
         new_g_token, acc_name, acc_lang, acc_country = self.get_g_token(self.config_data["session_token"])
-        new_bullet_token = self.get_bullet(new_g_token, DEFAULT_USER_AGENT, acc_lang, acc_country)
+        new_bullet_token = self.get_bullet(new_g_token, get_user_agent_text(), acc_lang, acc_country)
 
         self.config_data["g_token"] = new_g_token  # valid for 6 hours
         self.config_data["bullet_token"] = new_bullet_token  # valid for 2 hours
@@ -576,7 +576,7 @@ class NintendoApi:
             'Authorization': f'Bearer {self.config_data["bullet_token"]}',
             # update every time it's called with current global var
             'Accept-Language': lang,
-            'User-Agent': DEFAULT_USER_AGENT,
+            'User-Agent': get_user_agent_text(),
             'X-Web-View-Ver': self.webview_version,
             'Content-Type': 'application/json',
             'Accept': '*/*',
