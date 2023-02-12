@@ -1,6 +1,6 @@
 from typing import Coroutine, Any, List
 
-from nonebot import on_command, on_regex, logger
+from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import Bot, GROUP, GROUP_ADMIN, GROUP_OWNER, Message, MessageEvent, MessageSegment, \
     GroupMessageEvent
 from nonebot.matcher import Matcher
@@ -9,6 +9,7 @@ from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 from nonebot_plugin_apscheduler import scheduler
 
+from utils.log import logger
 from .data_source import eating_manager
 from .utils import Meals, save_cq_image
 
