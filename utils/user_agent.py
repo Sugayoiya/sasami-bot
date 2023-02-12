@@ -42,5 +42,9 @@ user_agent = [
 ]
 
 
+def get_user_agent_text():
+    return random.choice(user_agent)
+
+
 def get_user_agent():
     return {"User-Agent": random.choice(user_agent)}
