@@ -38,6 +38,7 @@ SUPPORTED_KEYS = [
     'app_user_agent',
     'force_uploads',
 ]
+# full GraphQL persisted query IDs see: https://github.com/samuelthomas2774/nxapi/discussions/11
 TRANSLATE_RID = {
     "HomeQuery": "dba47124d5ec3090c97ba17db5d2f4b3",
     "LatestBattleHistoriesQuery": "0176a47218d830ee447e10af4a287b3f",
@@ -100,29 +101,6 @@ def get_nintendo_web_ver(res: Response):
     version, revision = match.group("version"), match.group("revision")
     ver_string = f"{version}-{revision[:8]}"
     return ver_string
-
-
-# def link():
-#     """Logs in to a Nintendo Account and returns a session_token."""
-#     auth_state = base64.urlsafe_b64encode(os.urandom(36))
-#     auth_code_verifier = base64.urlsafe_b64encode(os.urandom(32))
-#     auth_cv_hash = hashlib.sha256()
-#     auth_cv_hash.update(auth_code_verifier.replace(b"=", b""))
-#     auth_code_challenge = base64.urlsafe_b64encode(auth_cv_hash.digest())
-#     body = {
-#         'state': auth_state,
-#         'redirect_uri': 'npf71b963c1b7b6d119://auth',
-#         'client_id': '71b963c1b7b6d119',
-#         'scope': 'openid user user.birthday user.mii user.screenName',
-#         'response_type': 'session_token_code',
-#         'session_token_code_challenge': auth_code_challenge.replace(b"=", b""),
-#         'session_token_code_challenge_method': 'S256',
-#         'theme': 'login_form'
-#     }
-#     link_msg = f'''https://accounts.nintendo.com/connect/1.0.0/authorize?{urllib.parse.urlencode(body)}
-#     右键单击 \"选择此人\" 按钮, 复制链接地址, 然后粘贴到这里.
-#     '''
-#     return link_msg, auth_code_verifier
 
 
 def get_session_token(nso_app_version, session_token_code, auth_code_verifier):
