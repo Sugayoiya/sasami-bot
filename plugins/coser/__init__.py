@@ -10,19 +10,14 @@ from utils.message_builder import image
 
 # from configs.config import Config
 
-__zx_plugin_name__ = "coser"
+__plugin_name__ = "coser"
 __plugin_usage__ = """
 usage：
-    三次元也不戳，嘿嘿嘿
     指令：
         ?N连cos/coser
         示例：cos
         示例：5连cos （单次请求张数小于9）
 """.strip()
-__plugin_des__ = "三次元也不戳，嘿嘿嘿"
-__plugin_cmd__ = ["cos/coser"]
-__plugin_version__ = 0.1
-__plugin_author__ = "HibiKier"
 __plugin_settings__ = {
     "level": 5,
     "default_status": True,
