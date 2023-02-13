@@ -28,7 +28,7 @@ RUNTIME_CONFIG = {
     "session_expire_timeout": config.get_config("BotSelfConfig", "session_expire_timeout"),
     # "gocq_accounts": config.get_config("InlineGoCQHTTP", "accounts"),
     # "gocq_download_domain": config.get_config("InlineGoCQHTTP", "download_domain"),
-    "gocq_version": "v1.0.0-rc3",
+    # "gocq_version": config.get_config("InlineGoCQHTTP", "download_version"),
 }
 
 # 代理，例如 "http://127.0.0.1:7890"
