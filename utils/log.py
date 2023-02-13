@@ -1,9 +1,9 @@
 import sys
 from datetime import datetime
 
+from nonebot import get_driver
 from nonebot.log import logger
 
-from configs.config import config
 from configs.path_config import LOG_PATH
 
 LOGGER_DIR = LOG_PATH
@@ -38,7 +38,7 @@ class LoguruNameDealer:
 logger.remove()
 logger.add(
     sys.stdout,
-    level="DEBUG" if config.get_config("BotSelfConfig", "debug") else "INFO",
+    level="DEBUG" if get_driver().config.log_level == "DEBUG" else "INFO",
     colorize=True,
     filter=LoguruNameDealer(),
     format=log_format,
