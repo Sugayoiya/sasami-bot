@@ -77,7 +77,7 @@ async def _(event: MessageEvent, state: T_State):
     if content.startswith("npf71b963c1b7b6d119"):
         nintendo_api.bind(content)
         log.info(f"绑定成功, {event.user_id}")
-        await account_link.finish(MessageSegment.text("rst"))
+        await account_link.finish(MessageSegment.text("绑定成功"))
     else:
         await account_link.finish(MessageSegment.text("链接错误, 请重新操作"))
 

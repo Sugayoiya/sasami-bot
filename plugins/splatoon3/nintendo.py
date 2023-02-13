@@ -14,7 +14,8 @@ from httpx import Response
 
 from configs.path_config import TEXT_PATH
 from utils.log import logger as log
-from utils.user_agent import get_user_agent_text
+
+# from utils.user_agent import get_user_agent_text
 
 session = requests.Session()
 thread_pool = ThreadPoolExecutor(max_workers=2)
@@ -147,7 +148,7 @@ def call_f_api(id_token, step):
         fetches the response (f token, UUID, and timestamp).
     """
     api_head = {
-        'User-Agent': f'sasami/{A_VERSION}',
+        'User-Agent': f's3s/{A_VERSION}',
         'Content-Type': 'application/json; charset=utf-8'
     }
     api_body = {
@@ -297,7 +298,24 @@ class NintendoApi:
         url = "https://api-lp1.znc.srv.nintendo.net/v3/Account/Login"
         r = requests.post(url, headers=app_head, json=body)
         splatoon_token = json.loads(r.text)
-        return splatoon_token
+        access_token = None
+        try:
+            access_token = splatoon_token["result"]["webApiServerCredential"]["accessToken"]
+        except:
+            # retry once if 9403/9599 error from nintendo
+            try:
+                f, uuid, timestamp = call_f_api(id_token, 1)
+                body["parameter"]["f"] = f
+                body["parameter"]["requestId"] = uuid
+                body["parameter"]["timestamp"] = timestamp
+                app_head["Content-Length"] = str(990 + len(f))
+                url = "https://api-lp1.znc.srv.nintendo.net/v3/Account/Login"
+                r = requests.post(url, headers=app_head, json=body)
+                splatoon_token = json.loads(r.text)
+                access_token = splatoon_token["result"]["webApiServerCredential"]["accessToken"]
+            except:
+                log.warning("Error from Nintendo (in Account/Login step):")
+        return f, uuid, timestamp, access_token
 
     def get_web_service_token(self, id_token, f, uuid, timestamp):
         app_head = {
@@ -322,7 +340,23 @@ class NintendoApi:
         url = "https://api-lp1.znc.srv.nintendo.net/v2/Game/GetWebServiceToken"
         r = requests.post(url, headers=app_head, json=body)
         web_service_resp = json.loads(r.text)
-        return web_service_resp["result"]["accessToken"]
+        web_service_token = None
+        try:
+            web_service_token = web_service_resp["result"]["webServiceToken"]
+        except:
+            # retry once if 9403/9599 error from nintendo
+            try:
+                f, uuid, timestamp = call_f_api(id_token, 2)
+                body["parameter"]["f"] = f
+                body["parameter"]["requestId"] = uuid
+                body["parameter"]["timestamp"] = timestamp
+                url = "https://api-lp1.znc.srv.nintendo.net/v2/Game/GetWebServiceToken"
+                r = requests.post(url, headers=app_head, json=body)
+                web_service_resp = json.loads(r.text)
+                web_service_token = web_service_resp["result"]["accessToken"]
+            except:
+                log.warning("Failed to get web service token.")
+        return web_service_token
 
     def link(self):
         """Logs in to a Nintendo Account and returns a session_token."""
@@ -405,8 +439,7 @@ class NintendoApi:
 
         f, uuid, timestamp = call_f_api(id_response["id_token"], 1)
         # get splatoon access token
-        splatoon_token = self.get_access_token(id_response, user_info, f, uuid, timestamp)
-        id_token = splatoon_token["result"]["webApiServerCredential"]["accessToken"]
+        f, uuid, timestamp, id_token = self.get_access_token(id_response, user_info, f, uuid, timestamp)
         # get web service token
         web_service_token = self.get_web_service_token(id_token, f, uuid, timestamp)
         return web_service_token, user_nickname, user_lang, user_country
@@ -424,7 +457,7 @@ class NintendoApi:
         log.debug("Attempting to generate new g_token and bulletToken...")
 
         new_g_token, acc_name, acc_lang, acc_country = self.get_g_token(self.config_data["session_token"])
-        new_bullet_token = self.get_bullet(new_g_token, get_user_agent_text(), acc_lang, acc_country)
+        new_bullet_token = self.get_bullet(new_g_token, DEFAULT_USER_AGENT, acc_lang, acc_country)
 
         self.config_data["g_token"] = new_g_token  # valid for 6 hours
         self.config_data["bullet_token"] = new_bullet_token  # valid for 2 hours
@@ -554,7 +587,7 @@ class NintendoApi:
             'Authorization': f'Bearer {self.config_data["bullet_token"]}',
             # update every time it's called with current global var
             'Accept-Language': lang,
-            'User-Agent': get_user_agent_text(),
+            'User-Agent': DEFAULT_USER_AGENT,
             'X-Web-View-Ver': self.webview_version,
             'Content-Type': 'application/json',
             'Accept': '*/*',
