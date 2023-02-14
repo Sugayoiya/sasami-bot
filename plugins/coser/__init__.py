@@ -1,7 +1,7 @@
 from typing import Tuple, Any
 
 from nonebot import on_regex
-from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent, PRIVATE
 from nonebot.params import RegexGroup
 
 from utils import withdraw_message_manager
@@ -32,7 +32,7 @@ __plugin_configs__ = {
     },
 }
 
-coser = on_regex(r"^(\d)?连?(cos|COS|coser|括丝)$", priority=5, block=True)
+coser = on_regex(r"^(\d)?连?(cos|COS|coser|括丝)$", priority=5, block=True, permission=PRIVATE)
 
 # 纯cos，较慢:https://picture.yinux.workers.dev
 # 比较杂，有福利姬，较快:https://api.jrsgslb.cn/cos/url.php?return=img
