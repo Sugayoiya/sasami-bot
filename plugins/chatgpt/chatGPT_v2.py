@@ -72,7 +72,7 @@ class ChatGPT:
 
 
 async def main():
-    chatbot = Chatbot(email="cnccncccnn@gmail.com", password="zaWkox-jodza3-jocwev")
+    chatbot = Chatbot("email", "password", False, "", False, "")
     async for line in chatbot.ask("Hello"):
         print(line["choices"][0]["text"].replace("<|im_end|>", ""), end="")
         sys.stdout.flush()

@@ -6,15 +6,27 @@ from collections import defaultdict
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
-from typing import List, Union, Optional, Type, Any
+from typing import (
+    Any,
+    AsyncGenerator,
+    Dict,
+    List,
+    Optional,
+    Type,
+    Union,
+)
 
 import httpx
 import nonebot
 import pypinyin
 import pytz
 from PIL import Image
+from nonebot import on_command, on_message
 from nonebot.adapters.onebot.v11 import Bot, Message
+from nonebot.adapters.onebot.v11 import GROUP, MessageEvent
 from nonebot.matcher import matchers, Matcher
+from nonebot.params import Depends
+from nonebot.rule import to_me
 
 from configs.config import SYSTEM_PROXY
 from utils.log import logger
@@ -520,3 +532,48 @@ def save_bytes_file(filename: Path, b: bytes):
     f = open(filename, 'wb')
     f.write(b.getvalue())
     f.close()
+
+
+def cooldow_checker(name: str, cd_time: int) -> Any:
+    cooldown = defaultdict(int)
+
+    async def check_cooldown(
+            matcher: Matcher, event: MessageEvent
+    ) -> AsyncGenerator[None, None]:
+        cooldown_time = cooldown[event.user_id] + cd_time
+        if event.time < cooldown_time:
+            await matcher.finish(
+                f"{name} 冷却中，剩余 {cooldown_time - event.time} 秒", at_sender=True
+            )
+        yield
+        cooldown[event.user_id] = event.time
+
+    return Depends(check_cooldown)
+
+
+def create_matcher(
+        command: Union[str, List[str]],
+        only_to_me: bool = True,
+        private: bool = True,
+        priority: int = 999,
+        block: bool = True,
+) -> Type[Matcher]:
+    params: Dict[str, Any] = {
+        "priority": priority,
+        "block": block,
+    }
+
+    if command:
+        on_matcher = on_command
+        command = [command] if isinstance(command, str) else command
+        params["cmd"] = command.pop(0)
+        params["aliases"] = set(command)
+    else:
+        on_matcher = on_message
+
+    if only_to_me:
+        params["rule"] = to_me()
+    if not private:
+        params["permission"] = GROUP
+
+    return on_matcher(**params)
