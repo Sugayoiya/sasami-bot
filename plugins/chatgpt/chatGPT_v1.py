@@ -61,12 +61,13 @@ class ChatGPT:
             return False
         return True
 
-    def ask(self, question: str) -> str:
+    async def ask(self, question: str) -> str:
+        prev_text = ""
         answer = ""
         for line in self.chatbot.ask(question):
-            message = line["message"][len(answer):]
-            print(message, end="", flush=True)
-            answer = line["message"]
+            message = line["message"][len(prev_text):]
+            answer += message
+            prev_text = line["message"]
         return answer
 
 

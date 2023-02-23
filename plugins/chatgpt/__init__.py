@@ -22,5 +22,5 @@ async def _(bot: Bot, event: MessageEvent):
     # 不响应自身发送的消息
     if event.sender.user_id == event.self_id:
         return
-    res = chat_bot.ask(event.get_plaintext())
+    res = await chat_bot.ask(event.get_plaintext())
     await chatgpt.finish(res)
