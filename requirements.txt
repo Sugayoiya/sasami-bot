@@ -21,3 +21,4 @@ aiohttp==3.7.4.post0
 ruamel.yaml>=0.17.21
 emoji==1.7.0
 revChatGPT
+EdgeGPT
