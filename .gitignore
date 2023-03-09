@@ -166,6 +166,7 @@ cython_debug/
 # nonebot account
 /accounts/[0-9]*
 
+/resources/data/tts/
 /resources/text/splatoon3/schedules.json
 /resources/text/splatoon3/gear.json
 
