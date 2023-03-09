@@ -166,6 +166,9 @@ cython_debug/
 # nonebot account
 /accounts/[0-9]*
 
+/resources/text/splatoon3/schedules.json
+/resources/text/splatoon3/gear.json
+
 # MAC
 .DS_Store
 
