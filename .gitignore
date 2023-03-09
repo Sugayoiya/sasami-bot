@@ -166,9 +166,6 @@ cython_debug/
 # nonebot account
 /accounts/[0-9]*
 
-# resources
-/resources/
-
 # MAC
 .DS_Store
 
