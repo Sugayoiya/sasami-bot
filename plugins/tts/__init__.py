@@ -1,13 +1,19 @@
-from nonebot import on_message
-from nonebot import require
-from nonebot.exception import ActionFailed, NetworkError
-from nonebot.permission import SUPERUSER
+from nonebot import on_message, get_driver
 from nonebot.plugin import PluginMetadata
-
-require("nonebot_plugin_apscheduler")
+from nonebot.adapters.onebot.v11.message import MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent
+from nonebot.exception import ActionFailed, NetworkError
+from nonebot.log import logger
+from nonebot.permission import SUPERUSER
+from nonebot import require
 from nonebot_plugin_apscheduler import scheduler
 
+from pathlib import Path
+import hashlib
+import random
+import re
 import string
+from torch import no_grad, LongTensor
 from scipy.io.wavfile import write
 import asyncio
 import traceback

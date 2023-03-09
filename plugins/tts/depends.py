@@ -1,14 +1,15 @@
 import re
 
+from nonebot.rule import Rule
+from nonebot.typing import T_State
+from nonebot.params import Depends
 from nonebot.adapters.onebot.v11 import (
+    Bot,
+    Message,
     MessageSegment,
     MessageEvent,
     GroupMessageEvent,
 )
-from nonebot.params import Depends
-from nonebot.rule import Rule
-from nonebot.typing import T_State
-
 from .config import tts_gal_config
 
 REGEX_DICT = "REGEX_DICT"

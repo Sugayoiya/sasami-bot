@@ -1,7 +1,7 @@
 import logging
 from json import loads
-
 from torch import load
+import logging
 
 
 class HParams():

@@ -1,6 +1,8 @@
 import math
-
+import torch
 from torch import nn
+from torch.nn import functional as F
+
 from torch.nn import Conv1d
 from torch.nn.utils import weight_norm, remove_weight_norm
 

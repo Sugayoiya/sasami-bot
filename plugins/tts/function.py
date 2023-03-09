@@ -1,22 +1,21 @@
-import base64
-import hashlib
-import hmac
-import json
-import os
-import random
-import time
-import uuid
-from sys import maxsize
-from typing import List, Tuple, Dict
-
 import httpx
+import time
+import hashlib
+import random
+import json
+import uuid
+import hmac
+import base64
 from ffmpy import FFmpeg
-from nonebot.log import logger
-from torch import LongTensor
-
-from .commons import intersperse
-from .config import tts_gal_config
+import os
 from .text import text_to_sequence
+from .commons import intersperse
+from torch import no_grad, LongTensor
+from .utils import *
+from nonebot.log import logger
+from .config import tts_gal_config
+from typing import List, Tuple, Dict
+from sys import maxsize
 
 
 def check_character(name, valid_names, tts_gal):

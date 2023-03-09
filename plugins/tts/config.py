@@ -1,8 +1,7 @@
 from pathlib import Path
-from typing import List
-
-from nonebot import get_driver
 from pydantic import Extra, BaseModel
+from nonebot import get_driver
+from typing import List
 
 data_path = Path() / "data"
 base_path = Path() / "data" / "nonebot_plugin_tts_gal"
