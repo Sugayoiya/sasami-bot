@@ -1,5 +1,5 @@
 import os
-from nonebot.log import logger
+from utils.log import logger
 from .function import support_tran
 
 

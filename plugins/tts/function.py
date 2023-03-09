@@ -12,7 +12,7 @@ from .text import text_to_sequence
 from .commons import intersperse
 from torch import no_grad, LongTensor
 from .utils import *
-from nonebot.log import logger
+from utils.log import logger
 from .config import tts_gal_config
 from typing import List, Tuple, Dict
 from sys import maxsize

@@ -3,7 +3,6 @@ from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from nonebot.exception import ActionFailed, NetworkError
-from nonebot.log import logger
 from nonebot.permission import SUPERUSER
 from nonebot import require
 from nonebot_plugin_apscheduler import scheduler
@@ -13,6 +12,7 @@ import hashlib
 import random
 import re
 import string
+from utils.log import logger as log
 from torch import no_grad, LongTensor
 from scipy.io.wavfile import write
 import asyncio
@@ -62,14 +62,14 @@ lock_tran_list = {
 
 @driver.on_startup
 def _():
-    logger.info("正在检查目录是否存在...")
+    log.debug("正在检查目录是否存在...")
     asyncio.ensure_future(checkDir(data_path, base_path, voice_path, model_path, config_path))
     filenames = []
     [filenames.append(model[0])
      for model in tts_gal.values() if not model[0] in filenames]
-    logger.info("正在检查配置文件是否存在...")
+    log.debug("正在检查配置文件是否存在...")
     asyncio.ensure_future(checkFile(model_path, config_path, filenames, tts_gal, __plugin_meta__, __valid_names__))
-    logger.info("正在检查配置项...")
+    log.debug("正在检查配置项...")
     asyncio.ensure_future(checkEnv(tts_gal_config, tran_type))
 
 
@@ -112,7 +112,7 @@ async def voicHandler(
     text = get_text(text, hps_ms, symbols, lang, False)
 
     try:
-        logger.info("加载模型中...")
+        log.debug("加载模型中...")
         net_g_ms = SynthesizerTrn(
             len(symbols),
             hps_ms.data.filter_length // 2 + 1,
@@ -126,7 +126,7 @@ async def voicHandler(
         await voice.finish("加载模型失败")
 
     try:
-        logger.info("正在生成中...")
+        log.debug("正在生成中...")
         with no_grad():
             x_tst = text.unsqueeze(0)
             x_tst_lengths = LongTensor([text.size(0)])
@@ -159,7 +159,7 @@ async def _(tran: str = RegexArg("tran")):
     elif tran in tran_type:
         if tran not in lock_tran_list["manual"]:
             lock_tran_list["manual"].append(tran)
-        logger.info(f"禁用成功")
+        log.info(f"禁用成功")
         await lock_tran.send(f"禁用成功")
     else:
         await lock_tran.send(f"未有{tran}翻译项")
@@ -172,7 +172,7 @@ async def _(tran: str = RegexArg("tran")):
             lock_tran_list["auto"].remove(tran)
         if tran in lock_tran_list["manual"]:
             lock_tran_list["manual"].remove(tran)
-        logger.info(f"启用成功")
+        log.info(f"启用成功")
         await lock_tran.send(f"启用成功")
     else:
         await lock_tran.send(f"{tran}翻译项未被禁用")
@@ -202,4 +202,4 @@ async def _():
 async def reset_tran():
     lock_tran_list["auto"].clear()
     valid_tran_type = [tran for tran in tran_type if tran not in lock_tran_list["manual"]]
-    logger.info(f"目前可用翻译:{','.join(valid_tran_type)}")
+    log.info(f"目前可用翻译:{','.join(valid_tran_type)}")

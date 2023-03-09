@@ -3,8 +3,10 @@ from pydantic import Extra, BaseModel
 from nonebot import get_driver
 from typing import List
 
-data_path = Path() / "data"
-base_path = Path() / "data" / "nonebot_plugin_tts_gal"
+from configs.path_config import DATA_PATH
+
+data_path = DATA_PATH
+base_path = data_path / "tts"
 voice_path = base_path / "voice"
 model_path = base_path / "model"
 config_path = base_path / "config"
