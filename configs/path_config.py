@@ -12,7 +12,7 @@ LOG_PATH = Path() / "log"
 # 字体路径
 FONT_PATH = Path() / "resources" / "font"
 # 数据路径
-DATA_PATH = Path() / "data"
+DATA_PATH = Path() / "resources" / "data"
 # 临时数据路径
 TEMP_PATH = Path() / "resources" / "temp"
 
