@@ -20,7 +20,7 @@ _status_msg = """
 """.strip()
 
 
-class Status():
+class Status:
     @staticmethod
     def ping() -> str:
         return "がんばらない……"

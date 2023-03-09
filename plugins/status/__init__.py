@@ -32,8 +32,7 @@ async def _():
     log.debug("开始检查资源消耗...")
     msg, stat = Status().get_status()
     if not stat:
-        log.warning(msg)
-
+        # log.warning(msg)
         bot = get_bot()
         for superuser in config.get_config("BotSelfConfig", "superusers"):
             await bot.send_private_msg(user_id=superuser, message=msg)
