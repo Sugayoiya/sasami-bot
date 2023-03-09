@@ -6,7 +6,7 @@ nonebot-plugin-htmlrender==0.2.0.3
 nonebot-plugin-imageutils==0.1.14
 jieba>=0.42.1
 pinyin>=0.4.0
-pypinyin>=0.46.0
+pypinyin>=0.47.0
 retrying>=1.3.3
 rich>=12.4.3
 ImageHash>=4.2.1
@@ -22,3 +22,14 @@ ruamel.yaml>=0.17.21
 emoji==1.7.0
 revChatGPT
 EdgeGPT
+
+cn2an
+numpy>=1.20.0
+unidecode==1.1.1
+pyopenjtalk==0.3.0
+torch==1.7.1
+numba>=0.56.2
+ffmpy==0.3.0
+scipy>=1.5.2
+httpx==0.23.1
+janome==0.4.2
