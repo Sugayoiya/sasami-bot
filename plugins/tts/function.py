@@ -12,7 +12,7 @@ from .text import text_to_sequence
 from .commons import intersperse
 from torch import no_grad, LongTensor
 from .utils import *
-from utils.log import logger
+from utils.log import logger as log
 from .config import tts_gal_config
 from typing import List, Tuple, Dict
 from sys import maxsize
@@ -37,9 +37,7 @@ def load_language(hps_ms):
     try:
         return hps_ms.language
     except:
-        logger.info("配置文件中缺少language项,请手动添加(新版本内容),具体填写内容请查看github主页\
-            https://github.com/dpm12345/nonebot_plugin_tts_gal/")
-        logger.info("将默认使用日语配置项")
+        log.info("配置文件中缺少language项,将默认使用日语配置项")
         return "ja"
 
 
@@ -47,12 +45,12 @@ def load_symbols(hps_ms, lang, symbols_dict):
     try:
         symbols = hps_ms.symbols
     except:
-        logger.info("配置文件中缺失symbols项,建议手动添加")
+        log.info("配置文件中缺失symbols项,建议手动添加")
         if lang in symbols_dict.keys():
-            logger.info("采用language指定的symbols项")
+            log.info("采用language指定的symbols项")
             symbols = symbols_dict[lang]
         else:
-            logger.info("该语言未有默认symbols项，将采用日语symbols")
+            log.info("该语言未有默认symbols项，将采用日语symbols")
             symbols = symbols_dict["ja"]
     return symbols
 
@@ -114,14 +112,14 @@ async def translate_youdao(text: str, lang: str) -> Tuple[str, bool]:
             resp = await client.post(url, data=data, headers=headers)
             result = json.loads(resp.content)
             if resp.status_code != 200:
-                logger.error(f"有道翻译错误代码 {resp.status_code},{resp.text}")
+                log.error(f"有道翻译错误代码 {resp.status_code},{resp.text}")
                 return "", False
         res = ""
         for s in result['translateResult'][0]:
             res += s['tgt']
         return res, False
     except Exception as e:
-        logger.error(f"有道翻译 {type(e)} {e}")
+        log.error(f"有道翻译 {type(e)} {e}")
         return "", False
 
 
@@ -160,16 +158,16 @@ async def translate_baidu(text: str, lang: str) -> Tuple[str, bool]:
             result = resp.json()
             status_code = resp.status_code
             if status_code != 200:
-                logger.error(f"百度翻译错误代码 {resp.status_code},{resp.text}")
+                log.error(f"百度翻译错误代码 {resp.status_code},{resp.text}")
                 return "", False
         if "error_code" in result.keys():
-            logger.error(f"百度翻译 {result['error_code']}:{result['error_msg']}")
+            log.error(f"百度翻译 {result['error_code']}:{result['error_msg']}")
             if result['error_code'] == "54004":
                 return "", True
             return "", False
         return result["trans_result"][0]["dst"], False
     except Exception as e:
-        logger.error(f"百度翻译 {type(e)} {e}")
+        log.error(f"百度翻译 {type(e)} {e}")
         return "", False
 
 
@@ -210,18 +208,18 @@ async def translate_tencent(text: str, lang: str) -> Tuple[str, bool]:
                 resp = await client.post(url, data=params)
                 status_code = resp.status_code
                 if status_code != 200:
-                    logger.error(f"腾讯语种识别错误代码 {resp.status_code},{resp.text}")
+                    log.error(f"腾讯语种识别错误代码 {resp.status_code},{resp.text}")
                     return "", False
                 res = resp.json()["Response"]
             if "Error" in res.keys():
-                logger.error(f"腾讯语种识别 {res['Error']['Code']} {res['Error']['Message']}")
+                log.error(f"腾讯语种识别 {res['Error']['Code']} {res['Error']['Message']}")
                 if res['Error']['Code'] == "FailedOperation.NoFreeAmount" or \
                         res['Error']['Code'] == "FailedOperation.ServiceIsolate":
                     return "", True
                 return "", False
             return res["Lang"], False
         except Exception as e:
-            logger.error(f"腾讯语种识别 {type(e)} {e}")
+            log.error(f"腾讯语种识别 {type(e)} {e}")
             return "", False
 
     lang_change = {
@@ -247,18 +245,18 @@ async def translate_tencent(text: str, lang: str) -> Tuple[str, bool]:
             resp = await client.post(url, data=params)
             status_code = resp.status_code
             if status_code != 200:
-                logger.error(f"腾讯翻译错误代码 {resp.status_code},{resp.text}")
+                log.error(f"腾讯翻译错误代码 {resp.status_code},{resp.text}")
                 return "", False
             res = resp.json()["Response"]
         if "Error" in res.keys():
-            logger.error(f"腾讯翻译 {res['Error']['Code']} {res['Error']['Message']}")
+            log.error(f"腾讯翻译 {res['Error']['Code']} {res['Error']['Message']}")
             if res['Error']['Code'] == "FailedOperation.NoFreeAmount" or \
                     res['Error']['Code'] == "FailedOperation.ServiceIsolate":
                 return "", True
             return "", False
         return res["TargetText"], False
     except Exception as e:
-        logger.error(f"腾讯翻译 {type(e)} {e}")
+        log.error(f"腾讯翻译 {type(e)} {e}")
         return "", False
 
 

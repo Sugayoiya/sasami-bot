@@ -74,7 +74,7 @@ def _():
 
 
 voice = on_message(
-    regex(rf"(?:{prefix} *)(?P<name>.+?)(?:说|发送)(?P<text>.+?)$"), block=False, priority=priority)
+    regex(rf"(?:{prefix} *)(?P<name>.+?)(?:说|发送)(?P<text>.+?)$"), block=True, priority=priority)
 lock_tran = on_message(regex(rf"(?:{prefix} *)禁用翻译(?: *)(?P<tran>.+)$"), permission=SUPERUSER, block=False,
                        priority=priority)
 unlock_tran = on_message(regex(rf"(?:{prefix} *)启用翻译(?: *)(?P<tran>.+)$"), permission=SUPERUSER, block=False,
