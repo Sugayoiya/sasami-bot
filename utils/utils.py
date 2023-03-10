@@ -534,7 +534,7 @@ def save_bytes_file(filename: Path, b: bytes):
     f.close()
 
 
-def cooldow_checker(name: str, cd_time: int) -> Any:
+def cooldown_checker(name: str, cd_time: int) -> Any:
     cooldown = defaultdict(int)
 
     async def check_cooldown(
