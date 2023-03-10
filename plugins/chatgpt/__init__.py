@@ -20,7 +20,7 @@ from ..tts.config import tts_gal_config
 from ..tts.function import character_list
 
 __plugin_name__ = "chatgpt"
-
+__plugin_cooldown__ = 30
 __plugin_usage__ = """
 usage：
     chatgpt
@@ -60,11 +60,11 @@ async def _(bot: Bot, target_text: str = ArgStr("chatgpt")):
         await chatgpt_config.finish("角色不存在，使用默认配置: " + DEFAULT_CHARACTER)
 
 
-@chatgpt.handle(parameterless=[cooldown_checker("", 20)])
+@chatgpt.handle(parameterless=[cooldown_checker(__plugin_name__, __plugin_cooldown__)])
 async def _(bot: Bot, event: MessageEvent):
-    # 当前时间比上次调用时间间隔小于20秒，人为设置cd
+    # 当前时间比上次调用时间间隔小于30秒，人为设置cd
     global last_time
-    if (datetime.datetime.now() - last_time).seconds < 20:
+    if (datetime.datetime.now() - last_time).seconds < __plugin_cooldown__:
         return
     last_time = datetime.datetime.now()
     # 不响应自身发送的消息
