@@ -84,31 +84,24 @@ show_lock_trans = on_message(regex(rf"(?:{prefix} *)查看禁用翻译(?: *)$"),
                              priority=priority)
 
 
-@voice.handle()
-async def voicHandler(
-        bot: Bot, event: MessageEvent,
-        name: str = RegexArg("name"),
-        text: str = RegexArg("text")
-):
+async def voice_handler(name: str, text: str):
     # 预处理
     config_file, model_file, index = check_character(name, __valid_names__, tts_gal)
     if config_file == "":
-        await voice.finish(MessageSegment.at(event.get_user_id()) + "暂时还未有该角色")
-
+        return "暂时还未有该角色"
+    # 生成随机文件名
     first_name = "".join(random.sample([x for x in string.ascii_letters + string.digits], 8))
     filename = hashlib.md5(first_name.encode()).hexdigest() + ".mp3"
     # 加载配置文件
     hps_ms = get_hparams_from_file(config_path / config_file)
-
     # 翻译的目标语言
     lang = load_language(hps_ms)
     symbols = load_symbols(hps_ms, lang, symbols_dict)
-
     # 文本处理
     text = changeE2C(text) if lang == "zh-CHS" else changeC2E(text)
     text = await translate(tran_type, lock_tran_list, text, lang)
     if not text:
-        await voice.finish("翻译文本时出错,请查看日志获取细节")
+        return "翻译文本时出错,请查看日志获取细节"
     text = get_text(text, hps_ms, symbols, lang, False)
 
     try:
@@ -123,7 +116,7 @@ async def voicHandler(
         load_checkpoint(model_path / model_file, net_g_ms)
     except:
         traceback.print_exc()
-        await voice.finish("加载模型失败")
+        return "加载模型失败"
 
     try:
         log.debug("正在生成中...")
@@ -135,10 +128,21 @@ async def voicHandler(
                                    noise_scale_w=0.8, length_scale=1)[0][0, 0].data.cpu().float().numpy()
         write(voice_path / filename, hps_ms.data.sampling_rate, audio)
         new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_gal_config.decibel))
+        return new_voice
     except:
         traceback.print_exc()
-        await voice.finish('生成失败')
+        return "生成失败"
 
+
+@voice.handle()
+async def _(
+        bot: Bot, event: MessageEvent,
+        name: str = RegexArg("name"),
+        text: str = RegexArg("text")
+):
+    new_voice = await voice_handler(name, text)
+    if isinstance(new_voice, str):
+        await voice.finish(MessageSegment.at(event.get_user_id()) + new_voice)
     try:
         await voice.send(MessageSegment.record(file=new_voice))
     except ActionFailed:
