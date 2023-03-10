@@ -38,9 +38,9 @@ character_name = DEFAULT_CHARACTER
 # 获取最后一次调用chatgpt的时间，默认为加载插件时间
 last_time = datetime.datetime.now()
 
-chatgpt = on_message(permission=SUPERUSER, priority=98, block=False, rule=to_me())
+chatgpt = on_message(priority=98, block=False, rule=to_me())
 
-chatgpt_config = on_command("chatgpt_config", aliases={"语音配置", "cv"},
+chatgpt_config = on_command("chatgpt_config", aliases={"语音配置", "cv"}, permission=SUPERUSER,
                             priority=15, block=True, rule=to_me())
 
 
