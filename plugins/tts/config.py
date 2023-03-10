@@ -1,4 +1,3 @@
-from pathlib import Path
 from pydantic import Extra, BaseModel
 from nonebot import get_driver
 from typing import List

@@ -84,6 +84,15 @@ show_lock_trans = on_message(regex(rf"(?:{prefix} *)查看禁用翻译(?: *)$"),
                              priority=priority)
 
 
+async def voice_for_chatgpt(name: str, text: str):
+    log.info(f"chatgpt返回的文本：{text}")
+    if len(text) < 50:
+        return await voice_handler(name, text)
+    else:
+        return text
+    # return await voice_handler(name, text)
+
+
 async def voice_handler(name: str, text: str):
     # 预处理
     config_file, model_file, index = check_character(name, __valid_names__, tts_gal)

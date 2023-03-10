@@ -18,6 +18,16 @@ from typing import List, Tuple, Dict
 from sys import maxsize
 
 
+def character_list(tts_gal):
+    valid_names = []
+    for names, model in tts_gal.items():
+        if isinstance(names, str):
+            valid_names.append(names)
+        elif isinstance(names, tuple):
+            valid_names.extend(names)
+    return valid_names
+
+
 def check_character(name, valid_names, tts_gal):
     index = None
     config_file = ""

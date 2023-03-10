@@ -1,17 +1,17 @@
 import os
-from utils.log import logger
+from utils.log import logger as log
 from .function import support_tran
 
 
 async def checkDir(*args):
     for path in args:
         if not os.path.exists(path):
-            logger.info(f"{path}目录不存在，正在创建...")
+            log.info(f"{path}目录不存在，正在创建...")
             try:
                 os.mkdir(path)
-                logger.info(f"{path}目录创建成功")
+                log.info(f"{path}目录创建成功")
             except:
-                logger.info(f"{path}目录创建失败")
+                log.info(f"{path}目录创建失败")
 
 
 async def checkFile(model_path, config_path, filenames, tts_gal, plugin_meta, valid_names):
@@ -21,10 +21,10 @@ async def checkFile(model_path, config_path, filenames, tts_gal, plugin_meta, va
         model_file = filename + ".pth"
         config_file = filename + ".json"
         if not os.path.exists(model_path / model_file):
-            logger.info(f"模型文件{model_file}缺失")
+            log.info(f"模型文件{model_file}缺失")
             flag = False
         if not os.path.exists(config_path / config_file):
-            logger.info(f"配置文件{config_file}缺失")
+            log.info(f"配置文件{config_file}缺失")
             flag = False
         if flag:
             exist_file.append(filename)
@@ -46,17 +46,17 @@ async def checkFile(model_path, config_path, filenames, tts_gal, plugin_meta, va
 
 async def checkEnv(plugin_config, tran_type):
     if plugin_config.auto_delete_voice == None:
-        logger.info("未配置auto_delete_voice项,将默认为true")
+        log.info("未配置auto_delete_voice项,将默认为true")
     if not plugin_config.tts_gal:
-        logger.info("未配置tts_gal项,请根据模型及项目主页Usage.md指南进行配置")
+        log.info("未配置tts_gal项,请根据模型及项目主页Usage.md指南进行配置")
 
     for i in range(len(tran_type) - 1, -1, -1):
         if tran_type[i] not in support_tran.keys():
-            logger.info(f"未支持{tran_type[i]}翻译,请及时修改")
+            log.info(f"未支持{tran_type[i]}翻译,请及时修改")
             del tran_type[i]
         if tran_type[i] in tran_type[:i]:
             del tran_type[i]
     if "youdao" not in tran_type:
         tran_type.append("youdao")
-    logger.info(f"可使用翻译有{','.join(tran_type)}")
+    log.info(f"可使用翻译有{','.join(tran_type)}")
     plugin_config.tts_gal_tran_type = tran_type.copy()
