@@ -25,7 +25,7 @@ class Tarot:
         tarot_json: Path = tarot_config.tarot_json / "tarot.json"
         with open(tarot_json, 'r', encoding='utf-8') as f:
             content = json.load(f)
-            self._formations = content.get("formation")
+            self._formations = content.get("formations")
             self._cards = content.get("cards")
 
         self._init_json_ok = True
@@ -42,7 +42,7 @@ class Tarot:
         self.cards_num = formation.get("cards_num")
         self.devined = random.sample(list(self._cards), self.cards_num)
         self.is_cut = formation.get("is_cut")
-        self.represent = random.choice(formation.get("represent"))
+        self.represent = random.choice(formation.get("representations"))
 
         return MessageSegment.text(f"启用{formation_name}，正在洗牌中"), self.cards_num
 
@@ -65,9 +65,11 @@ class Tarot:
         '''
         card: Dict[str, Dict[str, Union[str, Dict[str, str]]]] = self._cards.get(self.devined[index])
         name_cn: str = card.get("name_cn")
-        img_path: Path = tarot_config.tarot_path / card.get("type") / card.get("pic")
+        card_type = card.get("type")
+        card_file_name = card.get("pic") + ".png"
+        img_path: Path = tarot_config.tarot_path / card_type / card_file_name
         if not img_path.exists():
-            data = await get_tarot(card.get("type"), card.get("pic"))
+            data = await get_tarot(card_type, card_file_name)
             if data is None:
                 return MessageSegment.text(f"图片下载出错，请重试……")
 

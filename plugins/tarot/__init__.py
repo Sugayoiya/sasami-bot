@@ -16,8 +16,8 @@ __tarot_notes__ = f'''
 [塔罗牌] 得到单张塔罗牌回应
 [开启/启用/关闭/禁用]群聊转发 开启或关闭全局群聊转发'''.strip()
 
-divine = on_command(cmd="占卜", priority=7)
-tarot = on_command(cmd="塔罗牌", priority=7)
+divine = on_command(cmd="占卜", priority=7, block=True)
+tarot = on_command(cmd="塔罗牌", priority=7, block=True)
 chain_reply_switch = on_regex(pattern=r"^(开启|启用|关闭|禁用)群聊转发(模式)?$", permission=SUPERUSER, priority=7,
                               block=True)
 
@@ -48,7 +48,7 @@ async def _(bot: Bot, event: MessageEvent):
             else:
                 chain = await chain_reply(bot, chain, reveal_msg)
 
-    if tarot_manager.is_chain_reply:
+    if isinstance(event, GroupMessageEvent) and tarot_manager.is_chain_reply:
         await bot.send_group_forward_msg(group_id=event.group_id, messages=chain)
 
 
