@@ -15,8 +15,8 @@ from nonebot.typing import T_State
 from configs.path_config import TEXT_PATH
 from utils.utils import cooldown_checker
 from .chatGPT import Chatbot
-from ..tts import voice_for_chatgpt
-from ..tts.config import tts_gal_config
+from ..tts import voice_handler
+from ..tts.config import tts_config
 from ..tts.function import character_list
 
 __plugin_name__ = "chatgpt"
@@ -27,7 +27,7 @@ usage：
 """.strip()
 
 path = TEXT_PATH / "chatgpt" / "config.json"
-tts_gal = eval(tts_gal_config.tts_gal)
+tts_gal = eval(tts_config.tts_character)
 
 chat_bot = Chatbot("")
 chat_bot.load_config(path)
@@ -71,7 +71,7 @@ async def _(bot: Bot, event: MessageEvent):
     if event.sender.user_id == event.self_id:
         return
     res = chat_bot.ask_stream(event.get_plaintext())
-    new_voice = await voice_for_chatgpt(character_name, "".join(res))
+    new_voice = await voice_handler(character_name, "".join(res))
     if isinstance(new_voice, str):
         await chatgpt.finish(new_voice)
     else:
