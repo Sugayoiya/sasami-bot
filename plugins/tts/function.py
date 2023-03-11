@@ -13,7 +13,7 @@ from .commons import intersperse
 from torch import no_grad, LongTensor
 from .utils import *
 from utils.log import logger as log
-from .config import tts_gal_config
+from .config import tts_config
 from typing import List, Tuple, Dict
 from sys import maxsize
 
@@ -149,8 +149,8 @@ async def translate_baidu(text: str, lang: str) -> Tuple[str, bool]:
     if lang in lang_change.keys():
         lang = lang_change[lang]
     salt = str(round(time.time() * 1000))
-    appid = tts_gal_config.baidu_tran_appid
-    apikey = tts_gal_config.baidu_tran_apikey
+    appid = tts_config.baidu_tran_appid
+    apikey = tts_config.baidu_tran_apikey
     sign_raw = appid + text + salt + apikey
     sign = hashlib.md5(sign_raw.encode("utf8")).hexdigest()
     params = {
@@ -189,16 +189,16 @@ async def translate_tencent(text: str, lang: str) -> Tuple[str, bool]:
     async def getSign(action: str, params: dict) -> str:
         common = {
             "Action": action,
-            "Region": tts_gal_config.tencent_tran_region,
+            "Region": tts_config.tencent_tran_region,
             "Timestamp": int(time.time()),
             "Nonce": random.randint(1, maxsize),
-            "SecretId": tts_gal_config.tencent_tran_secretid,
+            "SecretId": tts_config.tencent_tran_secretid,
             "Version": "2018-03-21",
         }
         params.update(common)
         sign_str = "POSTtmt.tencentcloudapi.com/?"
         sign_str += "&".join("%s=%s" % (k, params[k]) for k in sorted(params))
-        secret_key = tts_gal_config.tencent_tran_secretkey
+        secret_key = tts_config.tencent_tran_secretkey
         sign_str = bytes(sign_str, "utf-8")
         secret_key = bytes(secret_key, "utf-8")
         hashed = hmac.new(secret_key, sign_str, hashlib.sha1)
@@ -247,7 +247,7 @@ async def translate_tencent(text: str, lang: str) -> Tuple[str, bool]:
         "Source": source_lang,
         "SourceText": text,
         "Target": lang,
-        "ProjectId": tts_gal_config.tencent_tran_projectid
+        "ProjectId": tts_config.tencent_tran_projectid
     }
     params["Signature"] = await getSign("TextTranslate", params)
     try:

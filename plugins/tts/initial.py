@@ -3,7 +3,7 @@ from utils.log import logger as log
 from .function import support_tran
 
 
-async def checkDir(*args):
+async def check_dir(*args):
     for path in args:
         if not os.path.exists(path):
             log.info(f"{path}目录不存在，正在创建...")
@@ -14,7 +14,7 @@ async def checkDir(*args):
                 log.info(f"{path}目录创建失败")
 
 
-async def checkFile(model_path, config_path, filenames, tts_gal, plugin_meta, valid_names):
+async def check_model(model_path, config_path, filenames, tts_gal, plugin_meta, valid_names):
     exist_file = []
     for filename in filenames:
         flag = True
@@ -44,10 +44,10 @@ async def checkFile(model_path, config_path, filenames, tts_gal, plugin_meta, va
         plugin_meta.usage = plugin_meta.usage + "\n目前无可使用的语音角色\n"
 
 
-async def checkEnv(plugin_config, tran_type):
+async def check_env(plugin_config, tran_type):
     if plugin_config.auto_delete_voice == None:
         log.info("未配置auto_delete_voice项,将默认为true")
-    if not plugin_config.tts_gal:
+    if not plugin_config.tts_character:
         log.info("未配置tts_gal项,请根据模型及项目主页Usage.md指南进行配置")
 
     for i in range(len(tran_type) - 1, -1, -1):
@@ -59,4 +59,4 @@ async def checkEnv(plugin_config, tran_type):
     if "youdao" not in tran_type:
         tran_type.append("youdao")
     log.info(f"可使用翻译有{','.join(tran_type)}")
-    plugin_config.tts_gal_tran_type = tran_type.copy()
+    plugin_config.tts_tran_type = tran_type.copy()

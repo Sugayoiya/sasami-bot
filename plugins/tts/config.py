@@ -12,13 +12,15 @@ config_path = base_path / "config"
 
 
 class Config(BaseModel, extra=Extra.ignore):
-    tts_gal: str = '{():[""]}'
+    tts_character: str = '{():[""]}'
     auto_delete_voice: bool = True
     decibel: int = -10
-    tts_gal_is_at: bool = True
-    tts_gal_prefix: str = ""
-    tts_gal_priority: int = 3
-    tts_gal_tran_type: List[str] = ["youdao"]
+    tts_at: bool = True
+    tts_prefix: str = ""
+    tts_priority: int = 3
+    tts_tran_type: List[str] = ["youdao"]
+    # nas配置不够, 40个字符为限
+    tts_token_threshold: int = 40
     baidu_tran_appid: str = ""
     baidu_tran_apikey: str = ""
     tencent_tran_region: str = "ap-shanghai"
@@ -27,8 +29,8 @@ class Config(BaseModel, extra=Extra.ignore):
     tencent_tran_projectid: int = 0
 
 
-tts_gal_config = Config.parse_obj(get_driver().config)
+tts_config = Config.parse_obj(get_driver().config)
 trigger_rule = ""
-if tts_gal_config.tts_gal_is_at:
+if tts_config.tts_at:
     trigger_rule += "@机器人 "
-trigger_rule += tts_gal_config.tts_gal_prefix
+trigger_rule += tts_config.tts_prefix
