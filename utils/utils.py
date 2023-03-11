@@ -1,8 +1,11 @@
+import os
 import base64
 import json
 import re
 import time
 from collections import defaultdict
+import zhconv
+import unicodedata
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
@@ -215,6 +218,31 @@ def is_number(s: str) -> bool:
     except (TypeError, ValueError):
         pass
     return False
+
+
+def load_config(inbuilt_file_var):
+    """
+    Just use `config = load_config(__file__)`,
+    you can get the config.json as a dict.
+    """
+    filename = os.path.join(os.path.dirname(inbuilt_file_var), 'config.json')
+    try:
+        with open(filename, encoding='utf8') as f:
+            config = json.load(f)
+            return config
+    except Exception as e:
+        logger.exception(e)
+        return {}
+
+
+def normalize_str(string) -> str:
+    """
+    规范化unicode字符串 并 转为小写 并 转为简体
+    """
+    string = unicodedata.normalize('NFKC', string)
+    string = string.lower()
+    string = zhconv.convert(string, 'zh-hans')
+    return string
 
 
 def get_bot() -> Optional[Bot]:

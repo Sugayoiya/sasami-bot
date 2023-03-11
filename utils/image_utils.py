@@ -14,7 +14,7 @@ from imagehash import ImageHash
 from matplotlib import pyplot as plt
 
 from configs.path_config import FONT_PATH, IMAGE_PATH
-from services import logger
+from loguru import logger
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 Image.MAX_IMAGE_PIXELS = None
@@ -95,6 +95,15 @@ def alpha2white_pil(pic: Image) -> Image:
                 color_d = (255, 255, 255, 255)
                 img.putpixel(dot, color_d)
     return img
+
+
+def concat_pic(pics, border=5):
+    num = len(pics)
+    w, h = pics[0].size
+    des = Image.new('RGBA', (w, num * h + (num - 1) * border), (255, 255, 255, 255))
+    for i, pic in enumerate(pics):
+        des.paste(pic, (0, i * (h + border)), pic)
+    return des
 
 
 def pic2b64(pic: Image) -> str:
