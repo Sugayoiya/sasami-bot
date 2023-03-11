@@ -1,12 +1,13 @@
 from nonebot import get_bot
 from nonebot.plugin import on_command
 from nonebot_plugin_apscheduler import scheduler
+from nonebot.permission import SUPERUSER
 
 from configs.config import config
 from utils.log import logger as log
 from .data_source import Status
 
-ping = on_command("ping")
+ping = on_command("ping", permission=SUPERUSER, priority=5, block=True)
 
 
 @ping.handle()
@@ -14,7 +15,7 @@ async def _():
     await ping.finish(Status.ping())
 
 
-status = on_command("status")
+status = on_command("status", permission=SUPERUSER, priority=5, block=True)
 
 
 @status.handle()

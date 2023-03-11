@@ -5,7 +5,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, PRIVATE
 from nonebot.params import RegexGroup
 
 from utils import withdraw_message_manager
-from utils.log import logger
+from utils.log import logger as log
 from utils.message_builder import image
 
 # from configs.config import Config
@@ -54,4 +54,4 @@ async def _(event: MessageEvent, reg_group: Tuple[Any, ...] = RegexGroup()):
             )
         except Exception as e:
             await coser.send("你cos给我看！")
-            logger.error(f"coser 发送了未知错误 {type(e)}：{e}")
+            log.error(f"cos 发送了未知错误 {type(e)}：{e}")

@@ -14,9 +14,9 @@ __world_cup_notes__ = f'''
 [世界杯赛程] 返回当天世界杯赛程
 '''.strip()
 
-world_cup = on_regex(r"^世界杯(帮助)?$", priority=15)
-world_cup_source = on_regex(r"^世界杯(源|直播|直播源)$", priority=15)
-world_cup_schedule = on_regex(r"^世界杯赛程(今天|明天|本周|下周)?$", priority=15)
+world_cup = on_regex(r"^世界杯(帮助)?$", priority=15, block=True)
+world_cup_source = on_regex(r"^世界杯(源|直播|直播源)$", priority=15, block=True)
+world_cup_schedule = on_regex(r"^世界杯赛程(今天|明天|本周|下周)?$", priority=15, block=True)
 world_cup_helper = WorldCup()
 
 
