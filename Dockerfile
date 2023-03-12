@@ -8,6 +8,8 @@ COPY ./ /app/
 
 RUN apt-get update && apt-get install -y build-essential cmake --no-install-recommends && apt-get install -y ffmpeg
 
-RUN /usr/local/bin/python -m pip install  --no-cache-dir --upgrade pip && pip install -r requirements.txt
+RUN /usr/local/bin/python -m pip install  --no-cache-dir --upgrade pip
+
+RUN pip install -r requirements.txt
 
 VOLUME /app/accounts /app/data
