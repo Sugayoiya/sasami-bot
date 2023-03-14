@@ -86,25 +86,33 @@ async def voice_handler(name: str, text: str):
     # 预处理
     config_file, model_file, index = check_character(name, __valid_names__, tts_gal)
     if config_file == "":
-        return "暂时还未有该角色"
+        return "no character"
     # 生成随机文件名
     first_name = "".join(random.sample([x for x in string.ascii_letters + string.digits], 8))
     filename = hashlib.md5(first_name.encode()).hexdigest() + ".mp3"
     # 加载配置文件
     hps_ms = get_hparams_from_file(config_path / config_file)
-    # 翻译的目标语言
-    lang = load_language(hps_ms)
-    symbols = load_symbols(hps_ms, lang, symbols_dict)
+    symbols = load_symbols(hps_ms, symbols_dict)
     emotion_embedding = hps_ms.data.emotion_embedding if 'emotion_embedding' in hps_ms.data.keys() else False
-    # 文本处理
-    text = changeE2C(text) if lang == "zh-CHS" else changeC2E(text)
-    text = await translate(tran_type, lock_tran_list, text, lang)
-    if not text:
-        return "翻译文本时出错,请查看日志获取细节"
-    text = get_text(text, hps_ms, symbols, lang, False)
+
+    # 文本处理 也许不再需要普通的翻译了
+    # text = changeE2C(text) if lang == "zh-CHS" else changeC2E(text)
+    # text = await translate(tran_type, lock_tran_list, text, lang)
+    # if not text:
+    #     return "翻译文本时出错,请查看日志获取细节"
+
+    length_scale, text = get_label_value(
+        text, 'LENGTH', 1, 'length scale')
+    noise_scale, text = get_label_value(
+        text, 'NOISE', 0.667, 'noise scale')
+    noise_scale_w, text = get_label_value(
+        text, 'NOISEW', 0.8, 'deviation of noise')
+    cleaned, text = get_label(text, 'CLEANED')
+
+    text = get_text(text, hps_ms, symbols, cleaned)
 
     try:
-        log.debug("加载模型中...")
+        log.debug("loading model...")
         net_g_ms = SynthesizerTrn(
             len(symbols),
             hps_ms.data.filter_length // 2 + 1,
@@ -116,22 +124,23 @@ async def voice_handler(name: str, text: str):
         load_checkpoint(model_path / model_file, net_g_ms)
     except:
         traceback.print_exc()
-        return "加载模型失败"
+        return "fail to load model"
 
     try:
-        log.debug("正在生成中...")
+        log.debug("generating voice...")
         with no_grad():
             x_tst = text.unsqueeze(0).to(device)
             x_tst_lengths = LongTensor([text.size(0)]).to(device)
             sid = LongTensor([index]).to(device) if index is not None else None
-            audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=.667,
-                                   noise_scale_w=0.8, length_scale=1)[0][0, 0].data.to(device).cpu().float().numpy()
+            audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
+                                   noise_scale_w=noise_scale_w, length_scale=length_scale)[0][0, 0].data.to(
+                device).cpu().float().numpy()
         write(voice_path / filename, hps_ms.data.sampling_rate, audio)
         new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_config.decibel))
         return new_voice
     except:
         traceback.print_exc()
-        return "生成失败"
+        return "fail to generate voice"
     finally:
         torch.cuda.empty_cache()
 

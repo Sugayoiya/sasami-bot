@@ -5,6 +5,7 @@ import random
 import json
 import uuid
 import hmac
+import re
 import base64
 from ffmpy import FFmpeg
 import os
@@ -35,7 +36,7 @@ def check_character(name, valid_names, tts_gal):
     for names, model in tts_gal.items():
         if names in valid_names and \
                 ((isinstance(names, str) and names == name) or
-                 ((isinstance(names, tuple) and name in names))):
+                 (isinstance(names, tuple) and name in names)):
             config_file = model[0] + ".json"
             model_file = model[0] + ".pth"
             index = None if len(model) == 1 else int(model[1])
@@ -46,35 +47,56 @@ def check_character(name, valid_names, tts_gal):
 def load_language(hps_ms):
     try:
         return hps_ms.language
-    except:
+    except AttributeError:
         log.info("配置文件中缺少language项,将默认使用日语配置项")
         return "ja"
 
 
-def load_symbols(hps_ms, lang, symbols_dict):
+def load_symbols(hps_ms, symbols_dict):
     try:
         symbols = hps_ms.symbols
-    except:
-        log.info("配置文件中缺失symbols项,建议手动添加")
+    except AttributeError:
+        lang = load_language(hps_ms)
+        log.warning("config.json file miss symbols, it is recommended to check you model config file")
         if lang in symbols_dict.keys():
-            log.info("采用language指定的symbols项")
+            log.info("use symbols in config.json file")
             symbols = symbols_dict[lang]
         else:
-            log.info("该语言未有默认symbols项，将采用日语symbols")
+            log.info("no default symbols, use japanese symbols as default")
             symbols = symbols_dict["ja"]
     return symbols
 
 
-def get_text(text, hps, symbols, lang, cleaned=False):
+def get_text(text, hps, symbols, cleaned=False):
     if cleaned:
-        text_norm = text_to_sequence(text, symbols, [], lang)
+        text_norm = text_to_sequence(text, symbols, [])
     else:
-        text_norm = text_to_sequence(
-            text, symbols, hps.data.text_cleaners, lang)
+        text_norm = text_to_sequence(text, symbols, hps.data.text_cleaners)
     if hps.data.add_blank:
         text_norm = intersperse(text_norm, 0)
     text_norm = LongTensor(text_norm)
     return text_norm
+
+
+def get_label_value(text, label, default, warning_name='value'):
+    value = re.search(rf'\[{label}=(.+?)\]', text)
+    if value:
+        try:
+            text = re.sub(rf'\[{label}=(.+?)\]', '', text, 1)
+            value = float(value.group(1))
+        except:
+            log.warning(f'Invalid {warning_name}!')
+            value = default
+    else:
+        value = default
+    return value, text
+
+
+def get_label(text, label):
+    if f'[{label}]' in text:
+        return True, text.replace(f'[{label}]', '')
+    else:
+        return False, text
 
 
 def changeC2E(s: str):
@@ -186,7 +208,7 @@ async def translate_tencent(text: str, lang: str) -> Tuple[str, bool]:
     return 翻译结果(str)，是否删除该项翻译(bool)
     '''
 
-    async def getSign(action: str, params: dict) -> str:
+    async def get_sign(action: str, params: dict) -> str:
         common = {
             "Action": action,
             "Region": tts_config.tencent_tran_region,
@@ -212,7 +234,7 @@ async def translate_tencent(text: str, lang: str) -> Tuple[str, bool]:
             "Text": text,
             "ProjectId": 0,
         }
-        params["Signature"] = await getSign("LanguageDetect", params)
+        params["Signature"] = await get_sign("LanguageDetect", params)
         try:
             async with httpx.AsyncClient() as client:
                 resp = await client.post(url, data=params)
@@ -249,7 +271,7 @@ async def translate_tencent(text: str, lang: str) -> Tuple[str, bool]:
         "Target": lang,
         "ProjectId": tts_config.tencent_tran_projectid
     }
-    params["Signature"] = await getSign("TextTranslate", params)
+    params["Signature"] = await get_sign("TextTranslate", params)
     try:
         async with httpx.AsyncClient() as client:
             resp = await client.post(url, data=params)

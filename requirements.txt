@@ -23,16 +23,24 @@ emoji==1.7.0
 revChatGPT
 EdgeGPT
 
-cn2an
 numpy>=1.20.0
 unidecode==1.1.1
 pyopenjtalk==0.3.0
 torch==1.7.1
 numba>=0.56.2
+ffmpy==0.3.0
 scipy>=1.5.2
 httpx==0.23.1
-janome==0.4.2
-
 zhconv~=1.4.1
 fuzzywuzzy
 librosa
+
+# language requirements
+janome==0.4.2
+opencc
+cn2an
+eng_to_ipa
+jamo
+ko_pron
+indic_transliteration
+num_thai
