@@ -1,30 +1,22 @@
-from nonebot import on_message, get_driver
-from nonebot.plugin import PluginMetadata
-from nonebot.adapters.onebot.v11.message import MessageSegment
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent
+import asyncio
+import string
+import traceback
+from pathlib import Path
+
+from nonebot import on_message
 from nonebot.exception import ActionFailed, NetworkError
 from nonebot.permission import SUPERUSER
-from nonebot import require
+from nonebot.plugin import PluginMetadata
 from nonebot_plugin_apscheduler import scheduler
-
-from pathlib import Path
-import hashlib
-import random
-import re
-import string
-from utils.log import logger as log
-from torch import no_grad, LongTensor
 from scipy.io.wavfile import write
-import asyncio
-import traceback
 
-from .depends import *
-from .initial import *
 from .config import *
-from .utils import *
-from .models import SynthesizerTrn
+from .depends import *
 from .function import *
+from .initial import *
+from .models import SynthesizerTrn
 from .text.symbols import symbols_ja, symbols_zh_CHS
+from .utils import *
 
 __plugin_meta__ = PluginMetadata(
     name="vits角色语音合成本地化",
@@ -85,6 +77,8 @@ change_threshold = on_message(regex(rf"(?:{prefix} *)修改阈值(?: *)(?P<thres
                               block=True, priority=priority)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 async def voice_handler(name: str, text: str):
     log.info(f"tts text：{text}")
     if len(text) > tts_config.tts_token_threshold:
