@@ -12,6 +12,8 @@ from torch.nn import Conv1d, ConvTranspose1d, Conv2d
 from torch.nn.utils import weight_norm, remove_weight_norm, spectral_norm
 from .commons import init_weights, get_padding
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class StochasticDurationPredictor(nn.Module):
     def __init__(self, in_channels, filter_channels, kernel_size, p_dropout, n_flows=4, gin_channels=0):
@@ -26,34 +28,35 @@ class StochasticDurationPredictor(nn.Module):
 
         self.log_flow = Log()
         self.flows = nn.ModuleList()
-        self.flows.append(ElementwiseAffine(2))
+        self.flows.append(ElementwiseAffine(2)).to(device)
         for i in range(n_flows):
-            self.flows.append(ConvFlow(2, filter_channels, kernel_size, n_layers=3))
-            self.flows.append(Flip())
+            self.flows.append(ConvFlow(2, filter_channels, kernel_size, n_layers=3)).to(device)
+            self.flows.append(Flip()).to(device)
 
-        self.post_pre = nn.Conv1d(1, filter_channels, 1)
-        self.post_proj = nn.Conv1d(filter_channels, filter_channels, 1)
-        self.post_convs = DDSConv(filter_channels, kernel_size, n_layers=3, p_dropout=p_dropout)
+        self.post_pre = nn.Conv1d(1, filter_channels, 1).to(device)
+        self.post_proj = nn.Conv1d(filter_channels, filter_channels, 1).to(device)
+        self.post_convs = DDSConv(filter_channels, kernel_size, n_layers=3, p_dropout=p_dropout).to(device)
         self.post_flows = nn.ModuleList()
-        self.post_flows.append(ElementwiseAffine(2))
+        self.post_flows.append(ElementwiseAffine(2)).to(device)
         for i in range(4):
-            self.post_flows.append(ConvFlow(2, filter_channels, kernel_size, n_layers=3))
-            self.post_flows.append(Flip())
+            self.post_flows.append(ConvFlow(2, filter_channels, kernel_size, n_layers=3)).to(device)
+            self.post_flows.append(Flip()).to(device)
 
-        self.pre = nn.Conv1d(in_channels, filter_channels, 1)
-        self.proj = nn.Conv1d(filter_channels, filter_channels, 1)
-        self.convs = DDSConv(filter_channels, kernel_size, n_layers=3, p_dropout=p_dropout)
+        self.pre = nn.Conv1d(in_channels, filter_channels, 1).to(device)
+        self.proj = nn.Conv1d(filter_channels, filter_channels, 1).to(device)
+        self.convs = DDSConv(filter_channels, kernel_size, n_layers=3, p_dropout=p_dropout).to(device)
         if gin_channels != 0:
-            self.cond = nn.Conv1d(gin_channels, filter_channels, 1)
+            self.cond = nn.Conv1d(gin_channels, filter_channels, 1).to(device)
 
     def forward(self, x, x_mask, w=None, g=None, reverse=False, noise_scale=1.0):
-        x = torch.detach(x)
+        x = torch.detach(x).to(device)
         x = self.pre(x)
         if g is not None:
-            g = torch.detach(g)
+            g = torch.detach(g).to(device)
             x = x + self.cond(g)
-        x = self.convs(x, x_mask)
+        x = self.convs(x, x_mask).to(device)
         x = self.proj(x) * x_mask
+        x = x.to(device)
 
         if not reverse:
             flows = self.flows
@@ -104,20 +107,20 @@ class DurationPredictor(nn.Module):
         self.p_dropout = p_dropout
         self.gin_channels = gin_channels
 
-        self.drop = nn.Dropout(p_dropout)
-        self.conv_1 = nn.Conv1d(in_channels, filter_channels, kernel_size, padding=kernel_size // 2)
-        self.norm_1 = LayerNorm(filter_channels)
-        self.conv_2 = nn.Conv1d(filter_channels, filter_channels, kernel_size, padding=kernel_size // 2)
-        self.norm_2 = LayerNorm(filter_channels)
-        self.proj = nn.Conv1d(filter_channels, 1, 1)
+        self.drop = nn.Dropout(p_dropout).to(device)
+        self.conv_1 = nn.Conv1d(in_channels, filter_channels, kernel_size, padding=kernel_size // 2).to(device)
+        self.norm_1 = LayerNorm(filter_channels).to(device)
+        self.conv_2 = nn.Conv1d(filter_channels, filter_channels, kernel_size, padding=kernel_size // 2).to(device)
+        self.norm_2 = LayerNorm(filter_channels).to(device)
+        self.proj = nn.Conv1d(filter_channels, 1, 1).to(device)
 
         if gin_channels != 0:
-            self.cond = nn.Conv1d(gin_channels, in_channels, 1)
+            self.cond = nn.Conv1d(gin_channels, in_channels, 1).to(device)
 
     def forward(self, x, x_mask, g=None):
-        x = torch.detach(x)
+        x = torch.detach(x).to(device)
         if g is not None:
-            g = torch.detach(g)
+            g = torch.detach(g).to(device)
             x = x + self.cond(g)
         x = self.conv_1(x * x_mask)
         x = torch.relu(x)
@@ -140,7 +143,8 @@ class TextEncoder(nn.Module):
                  n_heads,
                  n_layers,
                  kernel_size,
-                 p_dropout):
+                 p_dropout,
+                 emotion_embedding):
         super().__init__()
         self.n_vocab = n_vocab
         self.out_channels = out_channels
@@ -150,9 +154,13 @@ class TextEncoder(nn.Module):
         self.n_layers = n_layers
         self.kernel_size = kernel_size
         self.p_dropout = p_dropout
+        self.emotion_embedding = emotion_embedding
 
-        self.emb = nn.Embedding(n_vocab, hidden_channels)
-        nn.init.normal_(self.emb.weight, 0.0, hidden_channels ** -0.5)
+        if self.n_vocab != 0:
+            self.emb = nn.Embedding(n_vocab, hidden_channels, device=device)
+            if emotion_embedding:
+                self.emo_proj = nn.Linear(1024, hidden_channels)
+            nn.init.normal_(self.emb.weight, 0.0, hidden_channels ** -0.5)
 
         self.encoder = Encoder(
             hidden_channels,
@@ -160,13 +168,16 @@ class TextEncoder(nn.Module):
             n_heads,
             n_layers,
             kernel_size,
-            p_dropout)
-        self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1)
+            p_dropout).to(device)
+        self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1).to(device)
 
-    def forward(self, x, x_lengths):
-        x = self.emb(x) * math.sqrt(self.hidden_channels)  # [b, t, h]
-        x = torch.transpose(x, 1, -1)  # [b, h, t]
-        x_mask = torch.unsqueeze(sequence_mask(x_lengths, x.size(2)), 1).to(x.dtype)
+    def forward(self, x, x_lengths, emotion_embedding=None):
+        if self.n_vocab != 0:
+            x = self.emb(x) * math.sqrt(self.hidden_channels)  # [b, t, h]
+        if emotion_embedding is not None:
+            x = x + self.emo_proj(emotion_embedding.unsqueeze(1))
+        x = (torch.transpose(x, 1, -1).to(device))  # [b, h, t]
+        x_mask = (torch.unsqueeze(sequence_mask(x_lengths, x.size(2)), 1).to(x.dtype)).to(device)
 
         x = self.encoder(x * x_mask, x_mask)
         stats = self.proj(x) * x_mask
@@ -195,9 +206,10 @@ class ResidualCouplingBlock(nn.Module):
 
         self.flows = nn.ModuleList()
         for i in range(n_flows):
-            self.flows.append(ResidualCouplingLayer(channels, hidden_channels, kernel_size, dilation_rate, n_layers,
-                                                    gin_channels=gin_channels, mean_only=True))
-            self.flows.append(Flip())
+            self.flows.append(
+                ResidualCouplingLayer(channels, hidden_channels, kernel_size, dilation_rate, n_layers,
+                                      gin_channels=gin_channels, mean_only=True)).to(device)
+            self.flows.append(Flip()).to(device)
 
     def forward(self, x, x_mask, g=None, reverse=False):
         if not reverse:
@@ -227,17 +239,18 @@ class PosteriorEncoder(nn.Module):
         self.n_layers = n_layers
         self.gin_channels = gin_channels
 
-        self.pre = nn.Conv1d(in_channels, hidden_channels, 1)
-        self.enc = WN(hidden_channels, kernel_size, dilation_rate, n_layers, gin_channels=gin_channels)
-        self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1)
+        self.pre = nn.Conv1d(in_channels, hidden_channels, 1).to(device)
+        self.enc = WN(hidden_channels, kernel_size, dilation_rate, n_layers, gin_channels=gin_channels).to(
+            device)
+        self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1).to(device)
 
     def forward(self, x, x_lengths, g=None):
         x_mask = torch.unsqueeze(sequence_mask(x_lengths, x.size(2)), 1).to(x.dtype)
-        x = self.pre(x) * x_mask
-        x = self.enc(x, x_mask, g=g)
-        stats = self.proj(x) * x_mask
+        x = self.pre(x.to(device)) * x_mask.to(device)
+        x = self.enc(x.to(device), x_mask.to(device), g=g)
+        stats = self.proj(x.to(device)) * x_mask.to(device)
         m, logs = torch.split(stats, self.out_channels, dim=1)
-        z = (m + torch.randn_like(m) * torch.exp(logs)) * x_mask
+        z = (m + torch.randn_like(m.to(device)) * torch.exp(logs.to(device))) * x_mask.to(device)
         return z, m, logs, x_mask
 
 
@@ -247,26 +260,26 @@ class Generator(torch.nn.Module):
         super(Generator, self).__init__()
         self.num_kernels = len(resblock_kernel_sizes)
         self.num_upsamples = len(upsample_rates)
-        self.conv_pre = Conv1d(initial_channel, upsample_initial_channel, 7, 1, padding=3)
+        self.conv_pre = Conv1d(initial_channel, upsample_initial_channel, 7, 1, padding=3).to(device)
         resblock = ResBlock1 if resblock == '1' else ResBlock2
 
         self.ups = nn.ModuleList()
         for i, (u, k) in enumerate(zip(upsample_rates, upsample_kernel_sizes)):
             self.ups.append(weight_norm(
                 ConvTranspose1d(upsample_initial_channel // (2 ** i), upsample_initial_channel // (2 ** (i + 1)),
-                                k, u, padding=(k - u) // 2)))
+                                k, u, padding=(k - u) // 2))).to(device)
 
         self.resblocks = nn.ModuleList()
         for i in range(len(self.ups)):
             ch = upsample_initial_channel // (2 ** (i + 1))
             for j, (k, d) in enumerate(zip(resblock_kernel_sizes, resblock_dilation_sizes)):
-                self.resblocks.append(resblock(ch, k, d))
+                self.resblocks.append(resblock(ch, k, d)).to(device)
 
-        self.conv_post = Conv1d(ch, 1, 7, 1, padding=3, bias=False)
+        self.conv_post = Conv1d(ch, 1, 7, 1, padding=3, bias=False).to(device)
         self.ups.apply(init_weights)
 
         if gin_channels != 0:
-            self.cond = nn.Conv1d(gin_channels, upsample_initial_channel, 1)
+            self.cond = nn.Conv1d(gin_channels, upsample_initial_channel, 1).to(device)
 
     def forward(self, x, g=None):
         x = self.conv_pre(x)
@@ -412,6 +425,7 @@ class SynthesizerTrn(nn.Module):
                  n_speakers=0,
                  gin_channels=0,
                  use_sdp=True,
+                 emotion_embedding=False,
                  **kwargs):
 
         super().__init__()
@@ -443,7 +457,8 @@ class SynthesizerTrn(nn.Module):
                                  n_heads,
                                  n_layers,
                                  kernel_size,
-                                 p_dropout)
+                                 p_dropout,
+                                 emotion_embedding)
         self.dec = Generator(inter_channels, resblock, resblock_kernel_sizes, resblock_dilation_sizes, upsample_rates,
                              upsample_initial_channel, upsample_kernel_sizes, gin_channels=gin_channels)
         self.enc_q = PosteriorEncoder(spec_channels, inter_channels, hidden_channels, 5, 1, 16,
@@ -456,7 +471,7 @@ class SynthesizerTrn(nn.Module):
             self.dp = DurationPredictor(hidden_channels, 256, 3, 0.5, gin_channels=gin_channels)
 
         if n_speakers > 1:
-            self.emb_g = nn.Embedding(n_speakers, gin_channels)
+            self.emb_g = nn.Embedding(n_speakers, gin_channels).to(device)
 
     def forward(self, x, x_lengths, y, y_lengths, sid=None):
 
@@ -480,7 +495,7 @@ class SynthesizerTrn(nn.Module):
             neg_cent = neg_cent1 + neg_cent2 + neg_cent3 + neg_cent4
 
             attn_mask = torch.unsqueeze(x_mask, 2) * torch.unsqueeze(y_mask, -1)
-            attn = monotonic_align.maximum_path(neg_cent, attn_mask.squeeze(1)).unsqueeze(1).detach()
+            attn = maximum_path(neg_cent, attn_mask.squeeze(1)).unsqueeze(1).detach()
 
         w = attn.sum(2)
         if self.use_sdp:
@@ -499,8 +514,9 @@ class SynthesizerTrn(nn.Module):
         o = self.dec(z_slice, g=g)
         return o, l_length, attn, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 
-    def infer(self, x, x_lengths, sid=None, noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None):
-        x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths)
+    def infer(self, x, x_lengths, sid=None, noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None,
+              emotion_embedding=None):
+        x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths, emotion_embedding)
         if self.n_speakers > 0:
             g = self.emb_g(sid).unsqueeze(-1)  # [b, h, 1]
         else:

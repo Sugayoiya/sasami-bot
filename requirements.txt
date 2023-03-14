@@ -36,3 +36,4 @@ janome==0.4.2
 
 zhconv~=1.4.1
 fuzzywuzzy
+librosa

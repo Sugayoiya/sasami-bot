@@ -11,6 +11,7 @@ from .transforms import piecewise_rational_quadratic_transform
 
 LRELU_SLOPE = 0.1
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class LayerNorm(nn.Module):
     def __init__(self, channels, eps=1e-5):
@@ -40,15 +41,17 @@ class ConvReluNorm(nn.Module):
 
         self.conv_layers = nn.ModuleList()
         self.norm_layers = nn.ModuleList()
-        self.conv_layers.append(nn.Conv1d(in_channels, hidden_channels, kernel_size, padding=kernel_size // 2))
-        self.norm_layers.append(LayerNorm(hidden_channels))
+        self.conv_layers.append(
+            nn.Conv1d(in_channels, hidden_channels, kernel_size, padding=kernel_size // 2).to(device))
+        self.norm_layers.append(LayerNorm(hidden_channels).to(device))
         self.relu_drop = nn.Sequential(
-            nn.ReLU(),
-            nn.Dropout(p_dropout))
+            nn.ReLU().to(device),
+            nn.Dropout(p_dropout).to(device))
         for _ in range(n_layers - 1):
-            self.conv_layers.append(nn.Conv1d(hidden_channels, hidden_channels, kernel_size, padding=kernel_size // 2))
-            self.norm_layers.append(LayerNorm(hidden_channels))
-        self.proj = nn.Conv1d(hidden_channels, out_channels, 1)
+            self.conv_layers.append(
+                nn.Conv1d(hidden_channels, hidden_channels, kernel_size, padding=kernel_size // 2).to(device))
+            self.norm_layers.append(LayerNorm(hidden_channels).to(device))
+        self.proj = nn.Conv1d(hidden_channels, out_channels, 1).to(device)
         self.proj.weight.data.zero_()
         self.proj.bias.data.zero_()
 
@@ -79,15 +82,16 @@ class DDSConv(nn.Module):
         self.convs_1x1 = nn.ModuleList()
         self.norms_1 = nn.ModuleList()
         self.norms_2 = nn.ModuleList()
+
         for i in range(n_layers):
             dilation = kernel_size ** i
             padding = (kernel_size * dilation - dilation) // 2
-            self.convs_sep.append(nn.Conv1d(channels, channels, kernel_size,
-                                            groups=channels, dilation=dilation, padding=padding
-                                            ))
-            self.convs_1x1.append(nn.Conv1d(channels, channels, 1))
-            self.norms_1.append(LayerNorm(channels))
-            self.norms_2.append(LayerNorm(channels))
+            self.convs_sep.append(
+                nn.Conv1d(channels, channels, kernel_size, groups=channels, dilation=dilation, padding=padding).to(
+                    device))
+            self.convs_1x1.append(nn.Conv1d(channels, channels, 1).to(device))
+            self.norms_1.append(LayerNorm(channels).to(device))
+            self.norms_2.append(LayerNorm(channels).to(device))
 
     def forward(self, x, x_mask, g=None):
         if g is not None:
@@ -120,14 +124,14 @@ class WN(torch.nn.Module):
         self.drop = nn.Dropout(p_dropout)
 
         if gin_channels != 0:
-            cond_layer = torch.nn.Conv1d(gin_channels, 2 * hidden_channels * n_layers, 1)
+            cond_layer = torch.nn.Conv1d(gin_channels, 2 * hidden_channels * n_layers, 1).to(device)
             self.cond_layer = torch.nn.utils.weight_norm(cond_layer, name='weight')
 
         for i in range(n_layers):
             dilation = dilation_rate ** i
             padding = int((kernel_size * dilation - dilation) / 2)
             in_layer = torch.nn.Conv1d(hidden_channels, 2 * hidden_channels, kernel_size,
-                                       dilation=dilation, padding=padding)
+                                       dilation=dilation, padding=padding).to(device)
             in_layer = torch.nn.utils.weight_norm(in_layer, name='weight')
             self.in_layers.append(in_layer)
 
@@ -137,13 +141,13 @@ class WN(torch.nn.Module):
             else:
                 res_skip_channels = hidden_channels
 
-            res_skip_layer = torch.nn.Conv1d(hidden_channels, res_skip_channels, 1)
+            res_skip_layer = torch.nn.Conv1d(hidden_channels, res_skip_channels, 1).to(device)
             res_skip_layer = torch.nn.utils.weight_norm(res_skip_layer, name='weight')
             self.res_skip_layers.append(res_skip_layer)
 
     def forward(self, x, x_mask, g=None, **kwargs):
-        output = torch.zeros_like(x)
-        n_channels_tensor = torch.IntTensor([self.hidden_channels])
+        output = torch.zeros_like(x).to(device)
+        n_channels_tensor = torch.IntTensor([self.hidden_channels]).to(device)
 
         if g is not None:
             g = self.cond_layer(g)
@@ -154,7 +158,7 @@ class WN(torch.nn.Module):
                 cond_offset = i * 2 * self.hidden_channels
                 g_l = g[:, cond_offset:cond_offset + 2 * self.hidden_channels, :]
             else:
-                g_l = torch.zeros_like(x_in)
+                g_l = torch.zeros_like(x_in).to(device)
 
             acts = fused_add_tanh_sigmoid_multiply(
                 x_in,
@@ -203,6 +207,10 @@ class ResBlock1(torch.nn.Module):
         ])
         self.convs2.apply(init_weights)
 
+        if torch.cuda.is_available():
+            self.convs1 = self.convs1.to(device)
+            self.convs2 = self.convs2.to(device)
+
     def forward(self, x, x_mask=None):
         for c1, c2 in zip(self.convs1, self.convs2):
             xt = F.leaky_relu(x, LRELU_SLOPE)
@@ -230,18 +238,18 @@ class ResBlock2(torch.nn.Module):
         super(ResBlock2, self).__init__()
         self.convs = nn.ModuleList([
             weight_norm(Conv1d(channels, channels, kernel_size, 1, dilation=dilation[0],
-                               padding=get_padding(kernel_size, dilation[0]))),
+                               padding=get_padding(kernel_size, dilation[0]))).to(device),
             weight_norm(Conv1d(channels, channels, kernel_size, 1, dilation=dilation[1],
-                               padding=get_padding(kernel_size, dilation[1])))
+                               padding=get_padding(kernel_size, dilation[1]))).to(device)
         ])
         self.convs.apply(init_weights)
 
     def forward(self, x, x_mask=None):
         for c in self.convs:
-            xt = F.leaky_relu(x, LRELU_SLOPE)
+            xt = F.leaky_relu(x, LRELU_SLOPE).to(device)
             if x_mask is not None:
                 xt = xt * x_mask
-            xt = c(xt)
+            xt = c(xt).to(device)
             x = xt + x
         if x_mask is not None:
             x = x * x_mask
@@ -277,8 +285,8 @@ class ElementwiseAffine(nn.Module):
     def __init__(self, channels):
         super().__init__()
         self.channels = channels
-        self.m = nn.Parameter(torch.zeros(channels, 1))
-        self.logs = nn.Parameter(torch.zeros(channels, 1))
+        self.m = nn.Parameter(torch.zeros(channels, 1)).to(device)
+        self.logs = nn.Parameter(torch.zeros(channels, 1)).to(device)
 
     def forward(self, x, x_mask, reverse=False, **kwargs):
         if not reverse:
@@ -311,10 +319,10 @@ class ResidualCouplingLayer(nn.Module):
         self.half_channels = channels // 2
         self.mean_only = mean_only
 
-        self.pre = nn.Conv1d(self.half_channels, hidden_channels, 1)
+        self.pre = nn.Conv1d(self.half_channels, hidden_channels, 1).to(device)
         self.enc = WN(hidden_channels, kernel_size, dilation_rate, n_layers, p_dropout=p_dropout,
-                      gin_channels=gin_channels)
-        self.post = nn.Conv1d(hidden_channels, self.half_channels * (2 - mean_only), 1)
+                      gin_channels=gin_channels).to(device)
+        self.post = nn.Conv1d(hidden_channels, self.half_channels * (2 - mean_only), 1).to(device)
         self.post.weight.data.zero_()
         self.post.bias.data.zero_()
 
@@ -351,9 +359,9 @@ class ConvFlow(nn.Module):
         self.tail_bound = tail_bound
         self.half_channels = in_channels // 2
 
-        self.pre = nn.Conv1d(self.half_channels, filter_channels, 1)
-        self.convs = DDSConv(filter_channels, kernel_size, n_layers, p_dropout=0.)
-        self.proj = nn.Conv1d(filter_channels, self.half_channels * (num_bins * 3 - 1), 1)
+        self.pre = nn.Conv1d(self.half_channels, filter_channels, 1).to(device)
+        self.convs = DDSConv(filter_channels, kernel_size, n_layers, p_dropout=0.).to(device)
+        self.proj = nn.Conv1d(filter_channels, self.half_channels * (num_bins * 3 - 1), 1).to(device)
         self.proj.weight.data.zero_()
         self.proj.bias.data.zero_()
 

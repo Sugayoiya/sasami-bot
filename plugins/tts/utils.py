@@ -1,6 +1,10 @@
 import logging
 from json import loads
-from torch import load
+import torch
+from torch import load, FloatTensor
+from numpy import float32
+import librosa
+
 
 class HParams():
     def __init__(self, **kwargs):
@@ -35,7 +39,8 @@ class HParams():
 
 
 def load_checkpoint(checkpoint_path, model):
-    checkpoint_dict = load(checkpoint_path, map_location='cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    checkpoint_dict = load(checkpoint_path, map_location=device)
     iteration = checkpoint_dict['iteration']
     saved_state_dict = checkpoint_dict['model']
     if hasattr(model, 'module'):
@@ -65,3 +70,8 @@ def get_hparams_from_file(config_path):
 
     hparams = HParams(**config)
     return hparams
+
+
+def load_audio_to_torch(full_path, target_sampling_rate):
+    audio, sampling_rate = librosa.load(full_path, sr=target_sampling_rate, mono=True)
+    return FloatTensor(audio.astype(float32))

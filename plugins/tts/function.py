@@ -293,7 +293,8 @@ def change_by_decibel(audio_path: str, output_dir: str, decibel):
     if ext not in ['wav', 'mp3']:
         raise Exception('format error')
     new_name = uuid.uuid4()
-    ff = FFmpeg(inputs={'{}'.format(audio_path): None},
+    ff = FFmpeg(executable='C:\\Program Files\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg.exe',
+                inputs={'{}'.format(audio_path): None},
                 outputs={os.path.join(output_dir,
                                       '{}.{}'.format(new_name, ext)): '-filter:a "volume={}dB" -loglevel quiet'.format(
                     decibel)})

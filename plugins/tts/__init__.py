@@ -84,7 +84,7 @@ show_lock_trans = on_message(regex(rf"(?:{prefix} *)查看禁用翻译(?: *)$"),
 change_threshold = on_message(regex(rf"(?:{prefix} *)修改阈值(?: *)(?P<threshold>\d+)$"), permission=SUPERUSER,
                               block=True, priority=priority)
 
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 async def voice_handler(name: str, text: str):
     log.info(f"tts text：{text}")
     if len(text) > tts_config.tts_token_threshold:
@@ -101,6 +101,7 @@ async def voice_handler(name: str, text: str):
     # 翻译的目标语言
     lang = load_language(hps_ms)
     symbols = load_symbols(hps_ms, lang, symbols_dict)
+    emotion_embedding = hps_ms.data.emotion_embedding if 'emotion_embedding' in hps_ms.data.keys() else False
     # 文本处理
     text = changeE2C(text) if lang == "zh-CHS" else changeC2E(text)
     text = await translate(tran_type, lock_tran_list, text, lang)
@@ -115,6 +116,7 @@ async def voice_handler(name: str, text: str):
             hps_ms.data.filter_length // 2 + 1,
             hps_ms.train.segment_size // hps_ms.data.hop_length,
             n_speakers=hps_ms.data.n_speakers,
+            emotion_embedding=emotion_embedding,
             **hps_ms.model)
         _ = net_g_ms.eval()
         load_checkpoint(model_path / model_file, net_g_ms)
@@ -125,17 +127,19 @@ async def voice_handler(name: str, text: str):
     try:
         log.debug("正在生成中...")
         with no_grad():
-            x_tst = text.unsqueeze(0)
-            x_tst_lengths = LongTensor([text.size(0)])
-            sid = LongTensor([index]) if not index == None else None
+            x_tst = text.unsqueeze(0).to(device)
+            x_tst_lengths = LongTensor([text.size(0)]).to(device)
+            sid = LongTensor([index]).to(device) if index is not None else None
             audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=.667,
-                                   noise_scale_w=0.8, length_scale=1)[0][0, 0].data.cpu().float().numpy()
+                                   noise_scale_w=0.8, length_scale=1)[0][0, 0].data.to(device).cpu().float().numpy()
         write(voice_path / filename, hps_ms.data.sampling_rate, audio)
         new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_config.decibel))
         return new_voice
     except:
         traceback.print_exc()
         return "生成失败"
+    finally:
+        torch.cuda.empty_cache()
 
 
 @voice.handle()
@@ -210,7 +214,7 @@ async def _():
 async def _(threshold: str = RegexArg("threshold")):
     if threshold.isdigit():
         threshold = int(threshold)
-        if threshold < 0 or threshold > 100:
+        if threshold < 0:
             await change_threshold.send("阈值必须在0-100之间")
         else:
             tts_config.tts_token_threshold = threshold

@@ -21,8 +21,6 @@ config = driver.config
 nonebot.load_plugin("nonebot_plugin_gocqhttp")
 sleep(3)
 nonebot.load_plugin("nonebot_plugin_apscheduler")
-nonebot.load_plugin("nonebot_plugin_htmlrender")
-nonebot.load_plugin("nonebot_plugin_imageutils")
 nonebot.load_plugins("plugins")
 
 if __name__ == "__main__":
