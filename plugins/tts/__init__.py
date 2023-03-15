@@ -22,18 +22,19 @@ from .text.symbols import symbols_ja, symbols_zh_CHS
 from .utils import *
 
 __plugin_meta__ = PluginMetadata(
-    name="vits角色语音合成本地化",
-    description="基于nonebot2和vits的本地化角色语音合成插件",
+    name="vits_tts",
+    description="base on nonebot2 and vits_tts",
     usage=f"触发方式：{trigger_rule}[角色名][发送|说][文本内容]\n" +
           "※超级用户管理(若设置前缀，以下均加上前缀)\n" +
           f"   {trigger_rule}[禁用翻译 xxx]   禁用xxx翻译项\n" +
           f"   {trigger_rule}[启用翻译 xxx]   启用xxx翻译项\n" +
-          f"   {trigger_rule}[查看翻译]         查看目前可用的翻译项\n" +
-          f"   {trigger_rule}[查看禁用翻译]  查看已被禁用的翻译项",
+          f"   {trigger_rule}[查看翻译]       查看目前可用的翻译项\n" +
+          f"   {trigger_rule}[查看禁用翻译]    查看已被禁用的翻译项\n" +
+          f"   {trigger_rule}[修改阈值 数字]   修改生成语音的文字长度阈值\n",
     extra={
         "example": f"{trigger_rule} 宁宁说おはようございます.",
-        "author": "dpm12345 <1006975692@qq.com>",
-        "version": "0.3.8",
+        "author": "moko",
+        "version": "0.0.1",
     },
 )
 
