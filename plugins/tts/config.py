@@ -17,7 +17,7 @@ jieba_path = base_path / "jieba"
 
 class Config(BaseModel, extra=Extra.ignore):
     tts_character: str = '{():[""]}'
-    auto_delete_voice: bool = False
+    auto_delete_voice: bool = True
     decibel: int = -10
     tts_at: bool = True
     tts_prefix: str = ""
