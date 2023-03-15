@@ -4,8 +4,10 @@ import jieba
 import cn2an
 import logging
 
+from plugins.tts import jieba_path
+
 logging.getLogger('jieba').setLevel(logging.WARNING)
-jieba.set_dictionary(r'./jieba/dict.txt')
+jieba.set_dictionary(jieba_path / 'dict.txt')
 jieba.initialize()
 
 # List of (Latin alphabet, bopomofo) pairs:
