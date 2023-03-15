@@ -29,11 +29,11 @@ def character_list(tts_gal):
     return valid_names
 
 
-def check_character(name, valid_names, tts_gal):
+def check_character(name, valid_names, characters):
     index = None
     config_file = ""
     model_file = ""
-    for names, model in tts_gal.items():
+    for names, model in characters.items():
         if names in valid_names and \
                 ((isinstance(names, str) and names == name) or
                  (isinstance(names, tuple) and name in names)):
@@ -44,6 +44,19 @@ def check_character(name, valid_names, tts_gal):
     return config_file, model_file, index
 
 
+def check_embedding(name, valid_names, characters):
+    w2v2_file = ""
+    embedding_file = ""
+    for names, model in characters.items():
+        if names in valid_names and \
+                ((isinstance(names, str) and names == name) or
+                 (isinstance(names, tuple) and name in names)):
+            w2v2_file = model[0] + ".onnx"
+            embedding_file = model[0] + ".npy"
+            break
+    return w2v2_file, embedding_file
+
+
 def load_language(hps_ms):
     return hps_ms.language if 'language' in hps_ms.keys() else "ja"
 
@@ -52,11 +65,11 @@ def load_symbols(hps_ms, symbols_dict):
     return hps_ms.symbols if 'symbols' in hps_ms.keys() else symbols_dict[load_language(hps_ms)]
 
 
-def get_text(text, hps, symbols, cleaned=False):
+def get_text(text, hps, cleaned=False):
     if cleaned:
-        text_norm = text_to_sequence(text, symbols, [])
+        text_norm = text_to_sequence(text, hps.symbols, [])
     else:
-        text_norm = text_to_sequence(text, symbols, hps.data.text_cleaners)
+        text_norm = text_to_sequence(text, hps.symbols, hps.data.text_cleaners)
     if hps.data.add_blank:
         text_norm = intersperse(text_norm, 0)
     text_norm = LongTensor(text_norm)

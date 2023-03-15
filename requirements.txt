@@ -29,6 +29,7 @@ httpx==0.23.1
 zhconv~=1.4.1
 fuzzywuzzy
 librosa
+audonnx
 
 # language requirements
 janome==0.4.2

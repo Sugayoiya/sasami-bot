@@ -10,6 +10,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot_plugin_apscheduler import scheduler
 from scipy.io.wavfile import write
 
+from .mel_processing import spectrogram_torch
 from .config import *
 from .depends import *
 from .function import *
@@ -93,7 +94,8 @@ async def voice_handler(name: str, text: str):
     # 加载配置文件
     hps_ms = get_hparams_from_file(config_path / config_file)
     n_speakers = hps_ms.data.n_speakers if 'n_speakers' in hps_ms.data.keys() else 0
-    symbols = load_symbols(hps_ms, symbols_dict)
+    n_symbols = len(hps_ms.symbols) if 'symbols' in hps_ms.keys() else 0
+    # symbols = load_symbols(hps_ms, symbols_dict)
     emotion_embedding = hps_ms.data.emotion_embedding if 'emotion_embedding' in hps_ms.data.keys() else False
 
     # 文本处理 也许不再需要普通的翻译了
@@ -102,20 +104,10 @@ async def voice_handler(name: str, text: str):
     # if not text:
     #     return "翻译文本时出错,请查看日志获取细节"
 
-    length_scale, text = get_label_value(
-        text, 'LENGTH', 1, 'length scale')
-    noise_scale, text = get_label_value(
-        text, 'NOISE', 0.667, 'noise scale')
-    noise_scale_w, text = get_label_value(
-        text, 'NOISEW', 0.8, 'deviation of noise')
-    cleaned, text = get_label(text, 'CLEANED')
-
-    text = get_text(text, hps_ms, symbols, cleaned)
-
     try:
         log.debug("loading model...")
         net_g_ms = SynthesizerTrn(
-            len(symbols),
+            n_symbols,
             hps_ms.data.filter_length // 2 + 1,
             hps_ms.train.segment_size // hps_ms.data.hop_length,
             n_speakers=n_speakers,
@@ -127,23 +119,62 @@ async def voice_handler(name: str, text: str):
         traceback.print_exc()
         return "fail to load model"
 
-    try:
-        log.debug("generating voice...")
-        with no_grad():
-            x_tst = text.unsqueeze(0).to(device)
-            x_tst_lengths = LongTensor([text.size(0)]).to(device)
-            sid = LongTensor([index]).to(device) if index is not None else None
-            audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
-                                   noise_scale_w=noise_scale_w, length_scale=length_scale)[0][0, 0].data.to(
-                device).cpu().float().numpy()
-        write(voice_path / filename, hps_ms.data.sampling_rate, audio)
-        new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_config.decibel))
-        return new_voice
-    except:
-        traceback.print_exc()
-        return "fail to generate voice"
-    finally:
-        torch.cuda.empty_cache()
+    if n_symbols > 0:
+        length_scale, text = get_label_value(text, 'LENGTH', 1, 'length scale')
+        noise_scale, text = get_label_value(text, 'NOISE', 0.667, 'noise scale')
+        noise_scale_w, text = get_label_value(text, 'NOISEW', 0.8, 'deviation of noise')
+        cleaned, text = get_label(text, 'CLEANED')
+        text = get_text(text, hps_ms, cleaned)
+
+        if not emotion_embedding:
+            try:
+                log.debug("generating voice...")
+                with no_grad():
+                    x_tst = text.unsqueeze(0).to(device)
+                    x_tst_lengths = LongTensor([text.size(0)]).to(device)
+                    sid = LongTensor([index]).to(device) if index is not None else None
+                    audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
+                                           noise_scale_w=noise_scale_w, length_scale=length_scale)[0][0, 0].data.to(
+                        device).cpu().float().numpy()
+                write(voice_path / filename, hps_ms.data.sampling_rate, audio)
+                new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_config.decibel))
+                return new_voice
+            except:
+                traceback.print_exc()
+                return "fail to generate voice"
+            finally:
+                torch.cuda.empty_cache()
+        else:
+            import librosa
+            import numpy as np
+            import audonnx
+
+            w2v2_model, emotion_reference = check_embedding(name, __valid_names__, tts_gal)
+            if emotion_reference.endswith('.npy'):
+                emotion = np.load(emotion_reference)
+                emotion = FloatTensor(emotion).unsqueeze(0)
+            else:
+                audio16000, sampling_rate = librosa.load(emotion_reference, sr=16000, mono=True)
+                emotion = w2v2_model(audio16000, sampling_rate)['hidden_states']
+                emotion_reference = re.sub(r'\..*$', '', emotion_reference)
+                np.save(emotion_reference, emotion.squeeze(0))
+                emotion = FloatTensor(emotion)
+            try:
+                with no_grad():
+                    x_tst = text.unsqueeze(0)
+                    x_tst_lengths = LongTensor([text.size(0)])
+                    sid = LongTensor([index])
+                    audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
+                                           noise_scale_w=noise_scale_w, length_scale=length_scale,
+                                           emotion_embedding=emotion)[0][0, 0].data.to(device).cpu().float().numpy()
+                write(voice_path / filename, hps_ms.data.sampling_rate, audio)
+                new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_config.decibel))
+                return new_voice
+            except:
+                traceback.print_exc()
+                return "fail to generate voice"
+            finally:
+                torch.cuda.empty_cache()
 
 
 @voice.handle()
