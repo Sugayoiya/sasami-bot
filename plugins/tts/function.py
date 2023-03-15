@@ -45,26 +45,11 @@ def check_character(name, valid_names, tts_gal):
 
 
 def load_language(hps_ms):
-    try:
-        return hps_ms.language
-    except AttributeError:
-        log.info("配置文件中缺少language项,将默认使用日语配置项")
-        return "ja"
+    return hps_ms.language if 'language' in hps_ms.keys() else "ja"
 
 
 def load_symbols(hps_ms, symbols_dict):
-    try:
-        symbols = hps_ms.symbols
-    except AttributeError:
-        lang = load_language(hps_ms)
-        log.warning("config.json file miss symbols, it is recommended to check you model config file")
-        if lang in symbols_dict.keys():
-            log.info("use symbols in config.json file")
-            symbols = symbols_dict[lang]
-        else:
-            log.info("no default symbols, use japanese symbols as default")
-            symbols = symbols_dict["ja"]
-    return symbols
+    return hps_ms.symbols if 'symbols' in hps_ms.keys() else symbols_dict[load_language(hps_ms)]
 
 
 def get_text(text, hps, symbols, cleaned=False):

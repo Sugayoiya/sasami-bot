@@ -92,6 +92,7 @@ async def voice_handler(name: str, text: str):
     filename = hashlib.md5(first_name.encode()).hexdigest() + ".mp3"
     # 加载配置文件
     hps_ms = get_hparams_from_file(config_path / config_file)
+    n_speakers = hps_ms.data.n_speakers if 'n_speakers' in hps_ms.data.keys() else 0
     symbols = load_symbols(hps_ms, symbols_dict)
     emotion_embedding = hps_ms.data.emotion_embedding if 'emotion_embedding' in hps_ms.data.keys() else False
 
@@ -117,7 +118,7 @@ async def voice_handler(name: str, text: str):
             len(symbols),
             hps_ms.data.filter_length // 2 + 1,
             hps_ms.train.segment_size // hps_ms.data.hop_length,
-            n_speakers=hps_ms.data.n_speakers,
+            n_speakers=n_speakers,
             emotion_embedding=emotion_embedding,
             **hps_ms.model)
         _ = net_g_ms.eval()
