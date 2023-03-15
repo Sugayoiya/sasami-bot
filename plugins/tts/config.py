@@ -9,6 +9,8 @@ base_path = data_path / "tts"
 voice_path = base_path / "voice"
 model_path = base_path / "model"
 config_path = base_path / "config"
+emotion_path = base_path / "emotion"
+embedding_path = base_path / "embedding"
 
 
 class Config(BaseModel, extra=Extra.ignore):

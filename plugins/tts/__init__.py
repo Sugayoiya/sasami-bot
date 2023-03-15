@@ -56,7 +56,8 @@ lock_tran_list = {
 @driver.on_startup
 def _():
     log.debug("正在检查目录是否存在...")
-    asyncio.ensure_future(check_dir(data_path, base_path, voice_path, model_path, config_path))
+    asyncio.ensure_future(
+        check_dir(data_path, base_path, voice_path, model_path, config_path, emotion_path, embedding_path))
     filenames = []
     [filenames.append(model[0])
      for model in tts_gal.values() if not model[0] in filenames]
@@ -150,14 +151,18 @@ async def voice_handler(name: str, text: str):
             import audonnx
 
             w2v2_model, emotion_reference = check_embedding(name, __valid_names__, tts_gal)
+            emotion_file = emotion_path / w2v2_model
+            embedding_file = embedding_path / emotion_reference
+            audonnx.load(emotion_file)
+
             if emotion_reference.endswith('.npy'):
-                emotion = np.load(emotion_reference)
+                emotion = np.load(embedding_file)
                 emotion = FloatTensor(emotion).unsqueeze(0)
             else:
-                audio16000, sampling_rate = librosa.load(emotion_reference, sr=16000, mono=True)
+                audio16000, sampling_rate = librosa.load(embedding_file, sr=16000, mono=True)
                 emotion = w2v2_model(audio16000, sampling_rate)['hidden_states']
-                emotion_reference = re.sub(r'\..*$', '', emotion_reference)
-                np.save(emotion_reference, emotion.squeeze(0))
+                embedding_file = re.sub(r'\..*$', '', embedding_file)
+                np.save(embedding_file, emotion.squeeze(0))
                 emotion = FloatTensor(emotion)
             try:
                 with no_grad():
