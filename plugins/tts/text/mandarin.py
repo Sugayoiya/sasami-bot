@@ -1,5 +1,3 @@
-import os
-import sys
 import re
 from pypinyin import lazy_pinyin, BOPOMOFO
 import jieba
