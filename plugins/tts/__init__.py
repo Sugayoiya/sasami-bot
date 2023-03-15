@@ -1,6 +1,8 @@
 import asyncio
+import os
 import string
 import traceback
+import librosa
 from pathlib import Path
 
 from nonebot import on_message
@@ -57,7 +59,8 @@ lock_tran_list = {
 def _():
     log.debug("正在检查目录是否存在...")
     asyncio.ensure_future(
-        check_dir(data_path, base_path, voice_path, model_path, config_path, emotion_path, embedding_path))
+        check_dir(data_path, base_path, voice_path, model_path, config_path,
+                  emotion_path, embedding_path, hubert_path, jieba_path))
     filenames = []
     [filenames.append(model[0])
      for model in tts_gal.values() if not model[0] in filenames]
@@ -85,17 +88,20 @@ async def voice_handler(name: str, text: str):
     log.info(f"tts text：{text}")
     if len(text) > tts_config.tts_token_threshold:
         return text
-    # 预处理
+    # preprocess
     config_file, model_file, index = check_character(name, __valid_names__, tts_gal)
+    # replace &#91; &#93; to [ ] for qq message
+    text = check_text(text)
     if config_file == "":
         return "no character"
-    # 生成随机文件名
+    # generate random filename
     first_name = "".join(random.sample([x for x in string.ascii_letters + string.digits], 8))
     filename = hashlib.md5(first_name.encode()).hexdigest() + ".mp3"
-    # 加载配置文件
+    # loading model config
     hps_ms = get_hparams_from_file(config_path / config_file)
     n_speakers = hps_ms.data.n_speakers if 'n_speakers' in hps_ms.data.keys() else 0
     n_symbols = len(hps_ms.symbols) if 'symbols' in hps_ms.keys() else 0
+    # use_f0 = hps_ms.data.use_f0 if 'use_f0' in hps_ms.data.keys() else False
     # symbols = load_symbols(hps_ms, symbols_dict)
     emotion_embedding = hps_ms.data.emotion_embedding if 'emotion_embedding' in hps_ms.data.keys() else False
 
@@ -113,7 +119,7 @@ async def voice_handler(name: str, text: str):
             hps_ms.train.segment_size // hps_ms.data.hop_length,
             n_speakers=n_speakers,
             emotion_embedding=emotion_embedding,
-            **hps_ms.model)
+            **hps_ms.model).to(device)
         _ = net_g_ms.eval()
         load_checkpoint(model_path / model_file, net_g_ms)
     except:
@@ -129,14 +135,14 @@ async def voice_handler(name: str, text: str):
 
         if not emotion_embedding:
             try:
-                log.debug("generating voice...")
+                log.debug("generating voice without embedding...")
                 with no_grad():
                     x_tst = text.unsqueeze(0).to(device)
                     x_tst_lengths = LongTensor([text.size(0)]).to(device)
                     sid = LongTensor([index]).to(device) if index is not None else None
                     audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
-                                           noise_scale_w=noise_scale_w, length_scale=length_scale)[0][0, 0].data.to(
-                        device).cpu().float().numpy()
+                                           noise_scale_w=noise_scale_w, length_scale=length_scale)[0][0, 0] \
+                        .data.to(device).cpu().float().numpy()
                 write(voice_path / filename, hps_ms.data.sampling_rate, audio)
                 new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_config.decibel))
                 return new_voice
@@ -146,32 +152,34 @@ async def voice_handler(name: str, text: str):
             finally:
                 torch.cuda.empty_cache()
         else:
-            import librosa
             import numpy as np
             import audonnx
 
-            w2v2_model, emotion_reference = check_embedding(name, __valid_names__, tts_gal)
-            emotion_file = emotion_path / w2v2_model
-            embedding_file = embedding_path / emotion_reference
-            audonnx.load(emotion_file)
+            w2v2_model = audonnx.load(emotion_path)
+            embedding_refer = os.listdir(embedding_path)[0]
+            # emotion_file = emotion_path / w2v2_refer
+            embedding_file = embedding_path / embedding_refer
 
-            if emotion_reference.endswith('.npy'):
+            if embedding_refer.endswith('.npy'):
                 emotion = np.load(embedding_file)
                 emotion = FloatTensor(emotion).unsqueeze(0)
             else:
-                audio16000, sampling_rate = librosa.load(embedding_file, sr=16000, mono=True)
+                audio16000, sampling_rate = librosa.load(os.path.abspath(embedding_file), sr=16000, mono=True)
                 emotion = w2v2_model(audio16000, sampling_rate)['hidden_states']
-                embedding_file = re.sub(r'\..*$', '', embedding_file)
+                embedding_file = re.sub(r'\..*$', '', os.path.abspath(embedding_file))
                 np.save(embedding_file, emotion.squeeze(0))
-                emotion = FloatTensor(emotion)
+                emotion = FloatTensor(emotion).to(device)
+
             try:
+                log.debug("generating voice with embedding...")
                 with no_grad():
-                    x_tst = text.unsqueeze(0)
-                    x_tst_lengths = LongTensor([text.size(0)])
-                    sid = LongTensor([index])
+                    x_tst = text.unsqueeze(0).to(device)
+                    x_tst_lengths = LongTensor([text.size(0)]).to(device)
+                    sid = LongTensor([index]).to(device) if index is not None else None
                     audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
                                            noise_scale_w=noise_scale_w, length_scale=length_scale,
-                                           emotion_embedding=emotion)[0][0, 0].data.to(device).cpu().float().numpy()
+                                           emotion_embedding=emotion)[0][0, 0] \
+                        .data.to(device).cpu().float().numpy()
                 write(voice_path / filename, hps_ms.data.sampling_rate, audio)
                 new_voice = Path(change_by_decibel(voice_path / filename, voice_path, tts_config.decibel))
                 return new_voice
@@ -180,6 +188,54 @@ async def voice_handler(name: str, text: str):
                 return "fail to generate voice"
             finally:
                 torch.cuda.empty_cache()
+    # TODO: voice conversion
+    # else:
+    #     # hubert
+    #     from hubert_model import hubert_soft
+    #     hubert = hubert_soft(hubert_path / hubert_file)
+    #     if use_f0:
+    #         audio, sampling_rate = librosa.load(
+    #             audio_path, sr=hps_ms.data.sampling_rate, mono=True)
+    #         audio16000 = librosa.resample(
+    #             audio, orig_sr=sampling_rate, target_sr=16000)
+    #     else:
+    #         audio16000, sampling_rate = librosa.load(
+    #             audio_path, sr=16000, mono=True)
+    #
+    #     print_speakers(speakers, escape)
+    #     target_id = get_speaker_id('Target speaker ID: ')
+    #     out_path = input('Path to save: ')
+    #     length_scale, out_path = get_label_value(
+    #         out_path, 'LENGTH', 1, 'length scale')
+    #     noise_scale, out_path = get_label_value(
+    #         out_path, 'NOISE', 0.1, 'noise scale')
+    #     noise_scale_w, out_path = get_label_value(
+    #         out_path, 'NOISEW', 0.1, 'deviation of noise')
+    #
+    #     from torch import inference_mode, FloatTensor
+    #     import numpy as np
+    #     with inference_mode():
+    #         units = hubert.units(FloatTensor(audio16000).unsqueeze(
+    #             0).unsqueeze(0)).squeeze(0).numpy()
+    #         if use_f0:
+    #             f0_scale, out_path = get_label_value(
+    #                 out_path, 'F0', 1, 'f0 scale')
+    #             f0 = librosa.pyin(audio, sr=sampling_rate,
+    #                               fmin=librosa.note_to_hz('C0'),
+    #                               fmax=librosa.note_to_hz('C7'),
+    #                               frame_length=1780)[0]
+    #             target_length = len(units[:, 0])
+    #             f0 = np.nan_to_num(np.interp(np.arange(0, len(f0) * target_length, len(f0)) / target_length,
+    #                                          np.arange(0, len(f0)), f0)) * f0_scale
+    #             units[:, 0] = f0 / 10
+    #
+    #     stn_tst = FloatTensor(units)
+    #     with no_grad():
+    #         x_tst = stn_tst.unsqueeze(0)
+    #         x_tst_lengths = LongTensor([stn_tst.size(0)])
+    #         sid = LongTensor([target_id])
+    #         audio = net_g_ms.infer(x_tst, x_tst_lengths, sid=sid, noise_scale=noise_scale,
+    #                                noise_scale_w=noise_scale_w, length_scale=length_scale)[0][0, 0].data.float().numpy()
 
 
 @voice.handle()

@@ -11,18 +11,20 @@ model_path = base_path / "model"
 config_path = base_path / "config"
 emotion_path = base_path / "emotion"
 embedding_path = base_path / "embedding"
+hubert_path = base_path / "hubert"
+jieba_path = base_path / "jieba"
 
 
 class Config(BaseModel, extra=Extra.ignore):
     tts_character: str = '{():[""]}'
-    auto_delete_voice: bool = True
+    auto_delete_voice: bool = False
     decibel: int = -10
     tts_at: bool = True
     tts_prefix: str = ""
     tts_priority: int = 3
     tts_tran_type: List[str] = ["youdao"]
-    # nas配置不够, 40个字符为限
-    tts_token_threshold: int = 40
+    # nas配置不够, 40个字符为限, 上了pc 2070s 直接拉满
+    tts_token_threshold: int = 9999
     baidu_tran_appid: str = ""
     baidu_tran_apikey: str = ""
     tencent_tran_region: str = "ap-shanghai"

@@ -157,7 +157,7 @@ class TextEncoder(nn.Module):
         self.emotion_embedding = emotion_embedding
 
         if self.n_vocab != 0:
-            self.emb = nn.Embedding(n_vocab, hidden_channels, device=device)
+            self.emb = nn.Embedding(n_vocab, hidden_channels)
             if emotion_embedding:
                 self.emo_proj = nn.Linear(1024, hidden_channels)
             nn.init.normal_(self.emb.weight, 0.0, hidden_channels ** -0.5)
@@ -240,8 +240,7 @@ class PosteriorEncoder(nn.Module):
         self.gin_channels = gin_channels
 
         self.pre = nn.Conv1d(in_channels, hidden_channels, 1).to(device)
-        self.enc = WN(hidden_channels, kernel_size, dilation_rate, n_layers, gin_channels=gin_channels).to(
-            device)
+        self.enc = WN(hidden_channels, kernel_size, dilation_rate, n_layers, gin_channels=gin_channels).to(device)
         self.proj = nn.Conv1d(hidden_channels, out_channels * 2, 1).to(device)
 
     def forward(self, x, x_lengths, g=None):
@@ -461,8 +460,8 @@ class SynthesizerTrn(nn.Module):
                                  emotion_embedding)
         self.dec = Generator(inter_channels, resblock, resblock_kernel_sizes, resblock_dilation_sizes, upsample_rates,
                              upsample_initial_channel, upsample_kernel_sizes, gin_channels=gin_channels)
-        self.enc_q = PosteriorEncoder(spec_channels, inter_channels, hidden_channels, 5, 1, 16,
-                                      gin_channels=gin_channels)
+        self.enc_q = PosteriorEncoder(spec_channels, inter_channels,
+                                      hidden_channels, 5, 1, 16, gin_channels=gin_channels)
         self.flow = ResidualCouplingBlock(inter_channels, hidden_channels, 5, 1, 4, gin_channels=gin_channels)
 
         if use_sdp:
@@ -532,10 +531,10 @@ class SynthesizerTrn(nn.Module):
         y_mask = torch.unsqueeze(sequence_mask(y_lengths, None), 1).to(x_mask.dtype)
         attn_mask = torch.unsqueeze(x_mask, 2) * torch.unsqueeze(y_mask, -1)
         attn = generate_path(w_ceil, attn_mask)
-
-        m_p = torch.matmul(attn.squeeze(1), m_p.transpose(1, 2)).transpose(1, 2)  # [b, t', t], [b, t, d] -> [b, d, t']
-        logs_p = torch.matmul(attn.squeeze(1), logs_p.transpose(1, 2)).transpose(1,
-                                                                                 2)  # [b, t', t], [b, t, d] -> [b, d, t']
+        # [b, t', t], [b, t, d] -> [b, d, t']
+        m_p = torch.matmul(attn.squeeze(1), m_p.transpose(1, 2)).transpose(1, 2)
+        # [b, t', t], [b, t, d] -> [b, d, t']
+        logs_p = torch.matmul(attn.squeeze(1), logs_p.transpose(1, 2)).transpose(1, 2)
 
         z_p = m_p + torch.randn_like(m_p) * torch.exp(logs_p) * noise_scale
         z = self.flow(z_p, y_mask, g=g, reverse=True)

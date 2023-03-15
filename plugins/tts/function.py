@@ -44,17 +44,9 @@ def check_character(name, valid_names, characters):
     return config_file, model_file, index
 
 
-def check_embedding(name, valid_names, characters):
-    w2v2_file = ""
-    embedding_file = ""
-    for names, model in characters.items():
-        if names in valid_names and \
-                ((isinstance(names, str) and names == name) or
-                 (isinstance(names, tuple) and name in names)):
-            w2v2_file = model[0] + ".onnx"
-            embedding_file = model[0] + ".npy"
-            break
-    return w2v2_file, embedding_file
+def check_text(text):
+    """for qq message. replace &#91; to [ and &#93; to ]"""
+    return re.sub(r'&#91;([A-Z]{2})&#93;', r'[\g<1>]', text)
 
 
 def load_language(hps_ms):
@@ -315,9 +307,8 @@ def change_by_decibel(audio_path: str, output_dir: str, decibel):
     new_name = uuid.uuid4()
     ff = FFmpeg(executable='C:\\Program Files\\ffmpeg-master-latest-win64-gpl\\bin\\ffmpeg.exe',
                 inputs={'{}'.format(audio_path): None},
-                outputs={os.path.join(output_dir,
-                                      '{}.{}'.format(new_name, ext)): '-filter:a "volume={}dB" -loglevel quiet'.format(
-                    decibel)})
+                outputs={os.path.join(output_dir, '{}.{}'.format(new_name, ext)):
+                             '-filter:a "volume={}dB" -loglevel quiet'.format(decibel)})
     ff.run()
     os.remove(audio_path)
     return os.path.join(output_dir, '{}.{}'.format(new_name, ext))
