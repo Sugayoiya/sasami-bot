@@ -1,7 +1,7 @@
 import jieba
 import pinyin
-from nonebot.log import logger
 
+from utils.log import logger
 from .emoji import emoji, emoji_py
 
 

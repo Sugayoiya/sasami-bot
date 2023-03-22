@@ -6,3 +6,33 @@ nonebot-plugin-htmlrender==0.2.0.3
 nonebot-plugin-imageutils==0.1.14
 jieba>=0.42.1
 pinyin>=0.4.0
+pypinyin>=0.47.0
+retrying>=1.3.3
+rich>=12.4.3
+ImageHash>=4.2.1
+requests
+# cn2an>=0.5.16
+# lxml==4.6.5
+# dateparser>=1.1.0
+# aiohttp==3.7.4.post0
+beautifulsoup4==4.9.3
+aiocache==0.11.1
+aiohttp==3.7.4.post0
+ruamel.yaml>=0.17.21
+emoji==1.7.0
+revChatGPT
+EdgeGPT
+
+cn2an
+numpy>=1.20.0
+unidecode==1.1.1
+pyopenjtalk==0.3.0
+torch==1.7.1
+numba>=0.56.2
+ffmpy==0.3.0
+scipy>=1.5.2
+httpx==0.23.1
+janome==0.4.2
+
+zhconv~=1.4.1
+fuzzywuzzy

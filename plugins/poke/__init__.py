@@ -1,0 +1,66 @@
+import random
+
+from nonebot import on_notice
+from nonebot.adapters.onebot.v11 import PokeNotifyEvent
+
+from utils.message_builder import poke
+from utils.utils import CountLimiter
+
+__plugin_name__ = "戳一戳"
+
+__plugin_usage__ = """
+usage：
+    戳一戳
+""".strip()
+
+poke__reply = [
+    "lsp你再戳？",
+    "连个可爱美少女都要戳的肥宅真恶心啊。",
+    "你再戳！",
+    "？再戳试试？",
+    "别戳了别戳了再戳就坏了555",
+    "我爪巴爪巴，球球别再戳了",
+    "你戳你🐎呢？！",
+    "那...那里...那里不能戳...绝对...",
+    "(。´・ω・)ん?",
+    "有事恁叫我，别天天一个劲戳戳戳！",
+    "欸很烦欸！你戳🔨呢",
+    "?",
+    "再戳一下试试？",
+    "???",
+    "正在关闭对您的所有服务...关闭成功",
+    "啊呜，太舒服刚刚竟然睡着了。什么事？",
+    "正在定位您的真实地址...定位成功。轰炸机已起飞",
+]
+
+_clmt = CountLimiter(3)
+
+poke_ = on_notice(priority=5, block=False)
+
+
+@poke_.handle()
+async def _poke_event(event: PokeNotifyEvent):
+    if event.self_id == event.target_id:
+        _clmt.add(event.user_id)
+        if _clmt.check(event.user_id) or random.random() < 0.3:
+            rst = ""
+            if random.random() < 0.15:
+                rst = "气死我了！"
+            await poke_.finish(rst + random.choice(poke__reply), at_sender=True)
+        # rand = random.random()
+        # path = random.choice(["luoli", "meitu"])
+        # if rand <= 0.3 and len(os.listdir(IMAGE_PATH / "image_management" / path)) > 0:
+        #     index = random.randint(0, len(os.listdir(IMAGE_PATH / "image_management" / path)) - 1)
+        #     result = f"id：{index}" + image(f"{index}.jpg", "image_management/" + path)
+        #     await poke_.send(result)
+        #     log.info(f"USER {event.user_id} 戳了戳我 回复: {result}  {result}")
+        # elif 0.3 < rand < 0.6:
+        #     voice = random.choice(os.listdir(RECORD_PATH / "dinggong"))
+        #     result = record(voice, "dinggong")
+        #     await poke_.send(result)
+        #     await poke_.send(voice.split("_")[1])
+        #     log.info(
+        #         f'USER {event.user_id} 戳了戳我 回复: {result} \n {voice.split("_")[1]}'
+        #     )
+        else:
+            await poke_.send(poke(event.user_id))
