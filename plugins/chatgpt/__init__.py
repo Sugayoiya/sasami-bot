@@ -38,8 +38,6 @@ character_name = DEFAULT_CHARACTER
 # 获取最后一次调用chatgpt的时间，默认为加载插件时间
 last_time = datetime.datetime.now()
 
-chatgpt = on_message(priority=98, block=False, rule=to_me())
-
 chatgpt_config = on_command("chatgpt_config", aliases={"语音配置", "cv"}, permission=SUPERUSER,
                             priority=15, block=True, rule=to_me())
 
@@ -58,6 +56,9 @@ async def _(bot: Bot, target_text: str = ArgStr("chatgpt")):
         await chatgpt_config.finish("语音配置成功！")
     else:
         await chatgpt_config.finish("角色不存在，使用默认配置: " + DEFAULT_CHARACTER)
+
+
+chatgpt = on_message(priority=98, block=False, rule=to_me())
 
 
 @chatgpt.handle(parameterless=[cooldown_checker(__plugin_name__, __plugin_cooldown__)])
