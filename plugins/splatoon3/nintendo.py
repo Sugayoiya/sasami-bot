@@ -25,8 +25,9 @@ DEFAULT_USER_AGENT = 'Mozilla/5.0 (Linux; Android 11; Pixel 5) ' \
                      'AppleWebKit/537.36 (KHTML, like Gecko) ' \
                      'Chrome/94.0.4606.61 Mobile Safari/537.36'
 ACC_LOCALE = 'en-US|US'
-NSO_APP_VERSION = '2.4.0'
-WEBVIEW_VERSION = '2.0.0-7070f95e'
+NSO_APP_VERSION = "2.5.0"
+NSOAPP_VER_FALLBACK = "2.5.0"
+WEB_VIEW_VERSION = "3.0.0-0742bda0"
 F_GEN_URL = "https://api.imink.app/f"
 SPLATNET3_URL = 'https://api.lp1.av5ja.srv.nintendo.net'
 GRAPHQL_PATH = '/api/graphql'
@@ -475,8 +476,13 @@ class NintendoApi:
             and regenerates them if not.
         """
         log.debug("Validating your tokens...")
-        if any([not self.config_data["session_token"], not self.config_data["g_token"],
-                not self.config_data["bullet_token"]]):
+        # if any([not self.config_data["session_token"], not self.config_data["g_token"],
+        #         not self.config_data["bullet_token"]]):
+        # prevent key error
+        session_token = self.config_data.get("session_token", None)
+        g_token = self.config_data.get("g_token", None)
+        bullet_token = self.config_data.get("bullet_token", None)
+        if not all([session_token, g_token, bullet_token]):
             self.gen_new_tokens("blank")
         sha = TRANSLATE_RID["HomeQuery"]
         test = requests.post(SPLATNET3_URL + GRAPHQL_PATH,
