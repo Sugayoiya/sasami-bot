@@ -164,7 +164,7 @@ cython_debug/
 .idea/
 
 # nonebot account
-/accounts
+/accounts/
 
 # nonebot plugin resources folder
 /resources/data/tts/
