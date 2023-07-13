@@ -35,7 +35,7 @@ class ResourceError(Exception):
 
 
 async def download_url(url: str) -> Union[httpx.Response, None]:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(verify=False) as client:
         for i in range(3):
             try:
                 response = await client.get(url)
@@ -62,8 +62,8 @@ async def tarot_version_check() -> None:
 
     url = "https://raw.fastgit.org/MinatoAquaCrews/nonebot_plugin_tarot/master/nonebot_plugin_tarot/tarot.json"
     response = await download_url(url)
-    if response is None:
-        if not json_path.exists():
+    if not json_path.exists():
+        if response is None:
             log.warning("Tarot resource missing! Please check!")
             raise ResourceError
     else:
