@@ -57,7 +57,7 @@ class Splatoon3:
         self.brand_traits: dict = {}
 
         self.font = ImageFont.truetype(
-            str(FONT_PATH / "splatoon3" / "splatfontfont"), 20)
+            str(FONT_PATH / "splatoon3" / "splatfontfont.otf"), 20)
         self.x_font = ImageFont.truetype(
             str(FONT_PATH / "splatoon3" / "test0.ttf"), 20)
         self.init_json()
